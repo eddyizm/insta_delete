@@ -16,10 +16,16 @@ nContent = []
 
 status, response = http.request('http://www.22ndstreet.com/fishcounts.php')
 
-
-def write_header(log, headers):
+def write_header(log, title):
+    with open(log, 'w+') as g:
+      for h in title:
+        g.write(h+'\n')
+      
+def write_header(log, headers, title):
     counter = 0
     with open(log, 'w+') as g:
+      for t in title:
+        g.write(t.text+'\n')
       for h in headers:
         if len(h) < 20 and counter < 4:
           g.write(h+' | ')
@@ -53,7 +59,7 @@ for head in h:
 for cont in d:
   nContent.append(cont.text)
 
-write_header(log_path, nHeaders)
+write_header(log_path, nHeaders, t)
 write_data(log_path, nContent)
 
 #print (nHeaders)
