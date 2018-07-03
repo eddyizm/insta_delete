@@ -16,18 +16,17 @@ def getFrontlineEdu(textfile):
         return f.read().splitlines()
 #start session
 browser = webdriver.Chrome()
-browser.get('https://login.frontlineeducation.com/login?signin=eb9838bc56c4c37d308b52ada3dacb6e&productId=ABSMGMT&clientId=ABSMGMT#/login')  
+# browser.get('https://login.frontlineeducation.com/login?signin=eb9838bc56c4c37d308b52ada3dacb6e&productId=ABSMGMT&clientId=ABSMGMT#/login')  
 
-user = getFrontlineEdu(wtext)
-eUser = browser.find_element_by_id('Username')
-ePass = browser.find_element_by_id("Password")
+# user = getFrontlineEdu(wtext)
+# eUser = browser.find_element_by_id('Username')
+# ePass = browser.find_element_by_id("Password")
 
-eUser.send_keys(user[86])
-stime(2)
-ePass.send_keys(user[87])
-stime(5)
+# eUser.send_keys(user[86])
+# stime(2)
+# ePass.send_keys(user[87])
+# stime(5)
 
-'''
 browser.get('https://workforcenow.adp.com/public/index.htm')  
 assert "ADP" in browser.title
 
@@ -43,7 +42,7 @@ stime(5)
 btnLogin.submit()
 stime(30)
 browser.close()
-'''
+
 # options for webdriver
 ''' 
     # added options to disable notification pop up
