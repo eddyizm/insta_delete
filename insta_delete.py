@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
@@ -9,6 +10,8 @@ import time
 # store urls to delete later
 log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
 ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
+logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
+
 URLS = []
 
 def stime(seconds):
@@ -60,10 +63,40 @@ def scroll_to_end():
 # move to new url, wait 10 minutes, delete and loop through a few.
 
 def delete_posts(url_file):
-    browser = webdriver.Chrome()
+    mobile_emulation = { "deviceName": "Pixel 2" }
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("mobileEmulation", mobile_emulation)
+    #options.add_experimental_option()
+    options.add_argument("window-size=500,800")
+    browser = webdriver.Chrome(chrome_options=options)
     pattern = 'https://www.instagram.com/p/'
     browser.get("https://www.instagram.com/accounts/login/")
     stime(3)
+    f = open (logintext, 'r')
+    login = f.read().splitlines()
+    f.close()
+    insta_username = login[0]
+    insta_password = login[1]
+    eUser = browser.find_elements_by_xpath(
+        "//input[@name='username']")
+    stime(1)
+    ActionChains(browser).move_to_element(eUser[0]). \
+        click().send_keys(insta_username).perform()
+    stime(1)
+    ePass = browser.find_elements_by_xpath(
+        "//input[@name='password']")
+    stime(2)
+    ActionChains(browser).move_to_element(ePass[0]). \
+        click().send_keys(insta_password).perform()
+
+    # eUser.send_keys(insta_username)
+    # stime(2)
+    # ePass.send_keys(insta_password)
+    stime(5)
+    login_elem = browser.find_elements_by_xpath(
+        "//*[contains(text(), 'Log in')]")
+    
+    login_elem.submit()
 
 delete_posts(URLS)
 
