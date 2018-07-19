@@ -89,14 +89,13 @@ def delete_posts(url_file):
     ActionChains(browser).move_to_element(ePass[0]). \
         click().send_keys(insta_password).perform()
 
-    # eUser.send_keys(insta_username)
-    # stime(2)
-    # ePass.send_keys(insta_password)
-    stime(5)
-    login_elem = browser.find_elements_by_xpath(
-        "//*[contains(text(), 'Log in')]")
     
-    login_elem.submit()
+    stime(5)
+    login_button = browser.find_element_by_xpath(
+        "//form/span/button[text()='Log in']")
+    # login_elem = browser.find_elements_by_xpath(
+    #     "//*[contains(text(), 'Log in')]")
+    ActionChains(browser).move_to_element(login_button).click().perform()
 
 delete_posts(URLS)
 
