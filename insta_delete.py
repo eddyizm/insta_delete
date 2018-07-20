@@ -138,11 +138,11 @@ def login_to_site():
             new_file.append(l)
     
     if (counter > len(new_file)):
-        counter = len(new_file)
+        counter = (len(new_file) - 1)
     
     try:
         print ('in try block')
-        while (counter > 0):
+        while (counter >= 0):
             print (new_file[counter])
             browser.get(new_file[counter])
             stime(10)
@@ -165,7 +165,8 @@ def login_to_site():
         WriteToArchive(log_path, l3)	    
         browser.close()
 
-    except:
+    except Exception as err:
+        print (err)
         browser.close()
    
 if (os.stat(log_path).st_size == 0):
