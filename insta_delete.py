@@ -167,7 +167,7 @@ def login_to_site():
     except:
         browser.close()
    
-if (os.stat(log_path).st_size == 0:
+if (os.stat(log_path).st_size == 0):
     source_data = scroll_to_end()
     URLS = parse_href(source_data)
     WriteToArchive(log_path, URLS)    
