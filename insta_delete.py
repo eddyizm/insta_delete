@@ -57,8 +57,6 @@ def scroll_to_end():
     browser.close()
     return source
 
-# now to read the file and open the URL, navigate to delete button and remove post,
-# move to new url, wait 10 minutes, delete and loop through a few.
 def delete_posts(browser_object):
     links = OpenLog()
     new_file = []
@@ -137,7 +135,6 @@ def login_to_site():
     for l in links:
         if l.startswith('https://www.instagram.com/p/'):
             new_file.append(l)
-            
     
     if (counter > len(new_file)):
         counter = len(new_file)
@@ -169,16 +166,11 @@ def login_to_site():
 
     except:
         browser.close()
-    
-
-'''
-# scroll page and save data
-source_data = scroll_to_end()
-#wrapped this next step in a function
-# soup = BeautifulSoup(source_data, parse_only=SoupStrainer('a'))
-URLS = parse_href(source_data)
-WriteToArchive(log_path, URLS)    
-'''
+   
+if (os.stat(log_path).st_size == 0:
+    source_data = scroll_to_end()
+    URLS = parse_href(source_data)
+    WriteToArchive(log_path, URLS)    
 
 login_to_site()
 
