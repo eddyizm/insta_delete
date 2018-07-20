@@ -17,7 +17,7 @@ def stime(seconds):
 
 def OpenLog():
     with open(log_path, 'r', encoding= 'utf-8') as g:
-        lines = g.read()
+        lines = g.read().splitlines()
         return (lines)
 
 def WriteToArchive(log, data):
@@ -67,18 +67,23 @@ def delete_posts(browser_object):
     for l in links:
         if l.startswith('https://www.instagram.com/p/'):
             new_file.append(l)
+            
             #browser_object
     try:
         while counter > 0:
             browser_object.get(new_file[counter])
             stime(10)
-            options_button = browser.find_element_by_xpath(
+            options_button = browser_object.find_element_by_xpath(
                 "//span[text()='More options']")
-            ActionChains(browser).move_to_element(options_button).click().perform()                
+            ActionChains(browser_object).move_to_element(options_button).click().perform()                
             stime(3)
             delete_button = browser_object.find_element_by_xpath(
                 "//button[text()='Delete']")
-            ActionChains(browser).move_to_element(delete_button).click().perform()
+            ActionChains(browser_object).move_to_element(delete_button).click().perform()
+            stime(10)
+            confirm_delete = browser_object.find_element_by_xpath(
+                "//button[text()='Delete']")
+            ActionChains(browser_object).move_to_element(confirm_delete).click().perform()
             stime(10)
             deleted_urls.append(new_file[counter])
             counter -= 1
@@ -88,7 +93,6 @@ def delete_posts(browser_object):
 
     except:
         pass
-
 
 def login_to_site():
     mobile_emulation = { "deviceName": "Pixel 2" }
@@ -124,22 +128,57 @@ def login_to_site():
     #     "//*[contains(text(), 'Log in')]")    
     ActionChains(browser).move_to_element(login_button).click().perform()
     stime(10)
-    # notnow_button = browser.find_element_by_xpath(
-    #     "//span/button[text()='Not Now']")
-    # ActionChains(browser).move_to_element(notnow_button).click().perform()        
-    # stime(10)
-    browser.get('https://www.instagram.com/p/CX1wL/?taken-by=eddyizm')
-    stime(10)
-    options_button = browser.find_element_by_xpath(
-        "//span[text()='More options']")
-    ActionChains(browser).move_to_element(options_button).click().perform()                
-    stime(3)
+    # break this into the delete function
+    
+    links = OpenLog()
+    new_file = []
+    deleted_urls = []
+    counter = 10
+    for l in links:
+        if l.startswith('https://www.instagram.com/p/'):
+            new_file.append(l)
+            
+    
+    if (counter > len(new_file)):
+        counter = len(new_file)
+    
+    try:
+        print ('in try block')
+        while (counter > 0):
+            print (new_file[counter])
+            browser.get(new_file[counter])
+            stime(10)
+            options_button = browser.find_element_by_xpath(
+                "//span[text()='More options']")
+            ActionChains(browser).move_to_element(options_button).click().perform()                
+            stime(3)
+            delete_button = browser.find_element_by_xpath(
+                "//button[text()='Delete']")
+            ActionChains(browser).move_to_element(delete_button).click().perform()
+            stime(10)
+            confirm_delete = browser.find_element_by_xpath(
+                "//button[text()='Delete']")
+            ActionChains(browser).move_to_element(confirm_delete).click().perform()
+            stime(10)
+            deleted_urls.append(new_file[counter])
+            counter -= 1
 
+        l3 = [x for x in new_file if x not in deleted_urls]
+        WriteToArchive(log_path, l3)	    
+        browser.close()
+
+    except:
+        browser.close()
+    
+
+'''
 # scroll page and save data
 source_data = scroll_to_end()
 #wrapped this next step in a function
 # soup = BeautifulSoup(source_data, parse_only=SoupStrainer('a'))
 URLS = parse_href(source_data)
 WriteToArchive(log_path, URLS)    
+'''
 
 login_to_site()
+
