@@ -12,8 +12,6 @@ log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
 ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
 logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
 
-URLS = []
-
 def stime(seconds):
     return time.sleep(seconds)
 
@@ -27,7 +25,8 @@ def WriteToArchive(log, data):
          for d in data:
              f.write(str(d)+'\n')
 
-def parse_href(data, url_list):
+def parse_href(data):
+    url_list = []
     with open(data, encoding= 'utf-8') as fp:
         for link in BeautifulSoup(fp, "html.parser", parse_only=SoupStrainer('a') ):
             if link.has_attr('href'):
@@ -58,18 +57,46 @@ def scroll_to_end():
     browser.close()
     return source
 
-
 # now to read the file and open the URL, navigate to delete button and remove post,
 # move to new url, wait 10 minutes, delete and loop through a few.
+def delete_posts(browser_object):
+    links = OpenLog()
+    new_file = []
+    deleted_urls = []
+    counter = 10
+    for l in links:
+        if l.startswith('https://www.instagram.com/p/'):
+            new_file.append(l)
+            #browser_object
+    try:
+        while counter > 0:
+            browser_object.get(new_file[counter])
+            stime(10)
+            options_button = browser.find_element_by_xpath(
+                "//span[text()='More options']")
+            ActionChains(browser).move_to_element(options_button).click().perform()                
+            stime(3)
+            delete_button = browser_object.find_element_by_xpath(
+                "//button[text()='Delete']")
+            ActionChains(browser).move_to_element(delete_button).click().perform()
+            stime(10)
+            deleted_urls.append(new_file[counter])
+            counter -= 1
 
-def delete_posts(url_file):
+        l3 = [x for x in new_file if x not in deleted_urls]
+        WriteToArchive(log_path, l3)	    
+
+    except:
+        pass
+
+
+def login_to_site():
     mobile_emulation = { "deviceName": "Pixel 2" }
     options = webdriver.ChromeOptions()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
     #options.add_experimental_option()
     options.add_argument("window-size=500,800")
     browser = webdriver.Chrome(chrome_options=options)
-    pattern = 'https://www.instagram.com/p/'
     browser.get("https://www.instagram.com/accounts/login/")
     stime(3)
     f = open (logintext, 'r')
@@ -94,12 +121,25 @@ def delete_posts(url_file):
     login_button = browser.find_element_by_xpath(
         "//form/span/button[text()='Log in']")
     # login_elem = browser.find_elements_by_xpath(
-    #     "//*[contains(text(), 'Log in')]")
+    #     "//*[contains(text(), 'Log in')]")    
     ActionChains(browser).move_to_element(login_button).click().perform()
+    stime(10)
+    # notnow_button = browser.find_element_by_xpath(
+    #     "//span/button[text()='Not Now']")
+    # ActionChains(browser).move_to_element(notnow_button).click().perform()        
+    # stime(10)
+    browser.get('https://www.instagram.com/p/CX1wL/?taken-by=eddyizm')
+    stime(10)
+    options_button = browser.find_element_by_xpath(
+        "//span[text()='More options']")
+    ActionChains(browser).move_to_element(options_button).click().perform()                
+    stime(3)
 
-delete_posts(URLS)
+# scroll page and save data
+source_data = scroll_to_end()
+#wrapped this next step in a function
+# soup = BeautifulSoup(source_data, parse_only=SoupStrainer('a'))
+URLS = parse_href(source_data)
+WriteToArchive(log_path, URLS)    
 
-# source_data = scroll_to_end()
-#soup = BeautifulSoup(source_data, parse_only=SoupStrainer('a'))
-    
-# WriteToArchive(log_path, URLS)    
+login_to_site()
