@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup, SoupStrainer
 import time
+import os
 
 # store urls to delete later
 log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
