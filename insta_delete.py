@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup, SoupStrainer
 import time
 import os
+import sys
 
 # store urls to delete later
 log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
@@ -66,7 +67,6 @@ def login_to_site():
     mobile_emulation = { "deviceName": "Pixel 2" }
     options = webdriver.ChromeOptions()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
-    #options.add_experimental_option()
     options.add_argument("window-size=500,800")
     browser = webdriver.Chrome(chrome_options=options)
     browser.get("https://www.instagram.com/accounts/login/")
@@ -92,12 +92,10 @@ def login_to_site():
     stime(5)
     login_button = browser.find_element_by_xpath(
         "//form/span/button[text()='Log in']")
-    # login_elem = browser.find_elements_by_xpath(
-    #     "//*[contains(text(), 'Log in')]")    
+    
     ActionChains(browser).move_to_element(login_button).click().perform()
     stime(10)
-    # break this into the delete function
-    
+        
     links = OpenLog()
     new_file = []
     deleted_urls = []
@@ -108,7 +106,8 @@ def login_to_site():
     
     if (counter > len(new_file)):
         counter = (len(new_file) - 1)
-    
+    print (new_file[counter])
+    print (new_file)
     try:
         print ('in try block')
         while (counter >= 0):
@@ -136,7 +135,10 @@ def login_to_site():
 
     except Exception as err:
         print (err)
+        l3 = [x for x in new_file if x not in deleted_urls]
+        WriteToArchive(log_path, l3)
         browser.close()
+        sys.exit()
    
 if (os.stat(log_path).st_size == 0):
     source_data = scroll_to_end()
@@ -150,3 +152,4 @@ if (os.stat(log_path).st_size == 0):
 
 login_to_site()
 
+sys.exit()
