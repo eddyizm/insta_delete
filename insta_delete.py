@@ -47,7 +47,7 @@ def scroll_to_end():
         match=False
         count = 0
         while(match==False):
-        lastCount = lenOfPage
+            lastCount = lenOfPage
             time.sleep(10)
             lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
             count += 1
