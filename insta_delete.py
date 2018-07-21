@@ -26,7 +26,8 @@ def OpenLog():
 def WriteToArchive(log, data):
      with open(log, 'w', encoding= 'utf-8') as f:
          for d in data:
-             f.write('https://www.instagram.com'+str(d)+'\n')
+             f.write(str(d)+'\n')
+             #f.write('https://www.instagram.com'+str(d)+'\n')
 
 def parse_href(data):
     url_list = []
@@ -117,20 +118,24 @@ def login_to_site():
             print (new_file[counter])
             browser.get(new_file[counter])
             stime(10)
-            options_button = browser.find_element_by_xpath(
-                "//span[text()='More options']")
-            ActionChains(browser).move_to_element(options_button).click().perform()                
-            stime(3)
-            delete_button = browser.find_element_by_xpath(
-                "//button[text()='Delete']")
-            ActionChains(browser).move_to_element(delete_button).click().perform()
-            stime(10)
-            confirm_delete = browser.find_element_by_xpath(
-                "//button[text()='Delete']")
-            ActionChains(browser).move_to_element(confirm_delete).click().perform()
-            stime(10)
-            deleted_urls.append(new_file[counter])
-            counter -= 1
+            if ("Sorry, this page isn't available." in browser.page_source):
+                deleted_urls.append(new_file[counter])
+                counter -= 1
+            else:                
+                options_button = browser.find_element_by_xpath(
+                    "//span[text()='More options']")
+                ActionChains(browser).move_to_element(options_button).click().perform()                
+                stime(5)
+                delete_button = browser.find_element_by_xpath(
+                    "//button[text()='Delete']")
+                ActionChains(browser).move_to_element(delete_button).click().perform()
+                stime(10)
+                confirm_delete = browser.find_element_by_xpath(
+                    "//button[text()='Delete']")
+                ActionChains(browser).move_to_element(confirm_delete).click().perform()
+                stime(10)
+                deleted_urls.append(new_file[counter])
+                counter -= 1
 
         l3 = [x for x in new_file if x not in deleted_urls]
         WriteToArchive(log_path, l3)	    
@@ -141,16 +146,16 @@ def login_to_site():
         browser.close()
         sys.exit()
    
-# if (os.stat(log_path).st_size == 0):
-#     source_data = scroll_to_end()
-#     URLS = parse_href(source_data)
-#     print (URLS)
-#     WriteToArchive(log_path, URLS)    
+if (os.stat(log_path).st_size == 0):
+    source_data = scroll_to_end()
+    URLS = parse_href(source_data)
+    print (URLS)
+    WriteToArchive(log_path, URLS)    
 
-# manually load html file
-URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
-WriteToArchive(log_path, URLS)
+# # manually load html file
+# URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
+# WriteToArchive(log_path, URLS)
 
-#login_to_site()
+login_to_site()
 
 sys.exit()
