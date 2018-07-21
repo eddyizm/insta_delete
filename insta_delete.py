@@ -11,7 +11,7 @@ import sys
 
 # store urls to delete later
 log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
-# ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
+ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
 logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
 URLS = []
 
@@ -54,9 +54,10 @@ def scroll_to_end():
             count += 1
             if lastCount==lenOfPage:
                 match=True
-                print (count)
+                
         get_html = browser.page_source                       
         browser.close()
+        print (count)
     except Exception as err:
         print (err)
         browser.close()
@@ -104,13 +105,15 @@ def login_to_site():
         if l.startswith('https://www.instagram.com/p/'):
             new_file.append(l)
     
-    if (counter > len(new_file)):
+    if (counter >= len(new_file)):
         counter = (len(new_file) - 1)
-    print (new_file[counter])
-    print (new_file)
+
+    for n in new_file:
+        print (n)
+    print (counter)
     try:
         print ('in try block')
-        while (counter >= 0):
+        while (counter > -1):
             print (new_file[counter])
             browser.get(new_file[counter])
             stime(10)
@@ -135,21 +138,19 @@ def login_to_site():
 
     except Exception as err:
         print (err)
-        l3 = [x for x in new_file if x not in deleted_urls]
-        WriteToArchive(log_path, l3)
         browser.close()
         sys.exit()
    
-if (os.stat(log_path).st_size == 0):
-    source_data = scroll_to_end()
-    URLS = parse_href(source_data)
-    print (URLS)
-    WriteToArchive(log_path, URLS)    
+# if (os.stat(log_path).st_size == 0):
+#     source_data = scroll_to_end()
+#     URLS = parse_href(source_data)
+#     print (URLS)
+#     WriteToArchive(log_path, URLS)    
 
-# # manually load html file
-# URLS = parse_href(ig_html)
-# WriteToArchive(log_path, URLS)
+# manually load html file
+URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
+WriteToArchive(log_path, URLS)
 
-login_to_site()
+#login_to_site()
 
 sys.exit()
