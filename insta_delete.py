@@ -38,7 +38,6 @@ def parse_href(data):
     for link in BeautifulSoup(data, "html.parser", parse_only=SoupStrainer('a') ):
         if link.has_attr('href'):
             t = link.get('href')
-            print (t)
             if t is not None:
                 url_list.append(t)
                 
@@ -126,7 +125,6 @@ def login_to_site():
         print ('DELETING POSTS!')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         while (counter > -1):
-            print (new_file[counter])
             browser.get(new_file[counter])
             stime(10)
             if ("Sorry, this page isn't available." in browser.page_source):
