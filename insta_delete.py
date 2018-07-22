@@ -119,11 +119,11 @@ def login_to_site():
     if (counter >= len(new_file)):
         counter = (len(new_file) - 1)
     
-    for n in new_file:
-        print (n)
-    print (counter)
+    # for n in new_file:
+    #     print (n)
+    # print (counter)
     try:
-        print ('in try block to go into delete while loop')
+        print ('DELETING POSTS!')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         while (counter > -1):
             print (new_file[counter])
@@ -146,6 +146,7 @@ def login_to_site():
                 ActionChains(browser).move_to_element(confirm_delete).click().perform()
                 stime(10)
                 deleted_urls.append(new_file[counter])
+                print ('POST DELETED: '+new_file[counter])
                 counter -= 1
 
         l3 = [x for x in new_file if x not in deleted_urls]
