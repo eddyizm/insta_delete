@@ -133,7 +133,7 @@ def login_to_site():
                 counter -= 1
             else:                
                 options_button = browser.find_element_by_xpath(
-                    "//span[text()='More options']")
+                    "//span[@aria-label='More options']")
                 ActionChains(browser).move_to_element(options_button).click().perform()                
                 stime(5)
                 delete_button = browser.find_element_by_xpath(
