@@ -114,14 +114,13 @@ def login_to_site():
     for l in links:
         if l.startswith('https://www.instagram.com/p/'):
             new_file.append(l)
-    print ('counter should be set to 10: '+str(counter))
+    
     print ('length of file: '+str(len(new_file)))
     if (counter >= len(new_file)):
         counter = (len(new_file) - 1)
     
-    # for n in new_file:
-    #     print (n)
-    # print (counter)
+    print ('counter: '+str(counter))
+    
     try:
         print ('DELETING POSTS!')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -158,17 +157,18 @@ def login_to_site():
         print (err)
         browser.close()
         sys.exit()
-
+print ('----------------------------------------------------------------------------------------------------- ')
 print ('--------------------------------------- new session ------------------------------------------------- ')
 print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+print ('----------------------------------------------------------------------------------------------------- ')
 file_size = os.stat(log_path).st_size
 print ('file size: '+str(file_size))
 if (os.stat(log_path).st_size == 0):
     print ('file empty, going to scroll')
     source_data = scroll_to_end()
     URLS = parse_href(source_data)
-    print ('printing parsed URLS to write to log')
-    print (URLS)
+    # print ('printing parsed URLS to write to log')
+    # print (URLS)
     WriteToArchive(log_path, URLS)    
 
 # # manually load html file
@@ -176,6 +176,9 @@ if (os.stat(log_path).st_size == 0):
 # WriteToArchive(log_path, URLS)
 
 login_to_site()
-print ('--------------------------------------- end session ------------------------------------------------- ')
+print ('----------------------------------------------------------------------------------------------------- ')
 print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+print ('--------------------------------------- end session ------------------------------------------------- ')
+print ('----------------------------------------------------------------------------------------------------- ')
+
 sys.exit()
