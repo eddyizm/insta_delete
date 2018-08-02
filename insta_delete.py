@@ -110,7 +110,7 @@ def login_to_site():
     links = OpenLog()
     new_file = []
     deleted_urls = []
-    counter = 10
+    counter = 15
     for l in links:
         if l.startswith('https://www.instagram.com/p/'):
             new_file.append(l)
@@ -134,7 +134,7 @@ def login_to_site():
                 options_button = browser.find_element_by_xpath(
                     "//span[@aria-label='More options']")
                 ActionChains(browser).move_to_element(options_button).click().perform()                
-                stime(5)
+                stime(10)
                 delete_button = browser.find_element_by_xpath(
                     "//button[text()='Delete']")
                 ActionChains(browser).move_to_element(delete_button).click().perform()
@@ -157,6 +157,7 @@ def login_to_site():
         print (err)
         browser.close()
         sys.exit()
+        
 print ('----------------------------------------------------------------------------------------------------- ')
 print ('--------------------------------------- new session ------------------------------------------------- ')
 print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
