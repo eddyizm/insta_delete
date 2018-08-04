@@ -13,7 +13,7 @@ browser = webdriver.Chrome()
 ```
 with 
 ```
-brwoser = webdriver.Chrome('/path/to/chromedriver')  # Optional argument, if not specified will search path.
+browser = webdriver.Chrome('/path/to/chromedriver')  # Optional argument, if not specified will search path.
 ```
 
 See the getting started page for more help: http://chromedriver.chromium.org/getting-started
