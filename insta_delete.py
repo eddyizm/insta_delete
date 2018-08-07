@@ -157,29 +157,28 @@ def login_to_site():
         print (err)
         browser.close()
         sys.exit()
-        
-print ('----------------------------------------------------------------------------------------------------- ')
-print ('--------------------------------------- new session ------------------------------------------------- ')
-print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-print ('----------------------------------------------------------------------------------------------------- ')
-file_size = os.stat(log_path).st_size
-print ('file size: '+str(file_size))
-if (os.stat(log_path).st_size == 0):
-    print ('file empty, going to scroll')
-    source_data = scroll_to_end()
-    URLS = parse_href(source_data)
-    # print ('printing parsed URLS to write to log')
-    # print (URLS)
-    WriteToArchive(log_path, URLS)    
 
-# # manually load html file
-# URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
-# WriteToArchive(log_path, URLS)
+if __name__ == '__main__':
+    print ('----------------------------------------------------------------------------------------------------- ')
+    print ('--------------------------------------- new session ------------------------------------------------- ')
+    print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    print ('----------------------------------------------------------------------------------------------------- ')
+    file_size = os.stat(log_path).st_size
+    print ('file size: '+str(file_size))
+    if (os.stat(log_path).st_size == 0):
+        print ('file empty, going to scroll')
+        source_data = scroll_to_end()
+        URLS = parse_href(source_data)
+        WriteToArchive(log_path, URLS)    
 
-login_to_site()
-print ('----------------------------------------------------------------------------------------------------- ')
-print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-print ('--------------------------------------- end session ------------------------------------------------- ')
-print ('----------------------------------------------------------------------------------------------------- ')
+    # # manually load html file
+    # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
+    # WriteToArchive(log_path, URLS)
 
-sys.exit()
+    login_to_site()
+    print ('----------------------------------------------------------------------------------------------------- ')
+    print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    print ('--------------------------------------- end session ------------------------------------------------- ')
+    print ('----------------------------------------------------------------------------------------------------- ')
+
+    sys.exit()
