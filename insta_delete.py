@@ -73,90 +73,96 @@ def scroll_to_end():
     return get_html
 
 def login_to_site():
-    print ('logging in as mobile device to delete')
-    print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    mobile_emulation = { "deviceName": "Pixel 2" }
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("mobileEmulation", mobile_emulation)
-    options.add_argument("window-size=500,800")
-    browser = webdriver.Chrome(chrome_options=options)
-    browser.get("https://www.instagram.com/accounts/login/")
-    stime(3)
-    f = open (logintext, 'r')
-    login = f.read().splitlines()
-    f.close()
-    insta_username = login[0]
-    insta_password = login[1]
-    eUser = browser.find_elements_by_xpath(
-        "//input[@name='username']")
-    stime(1)
-    ActionChains(browser).move_to_element(eUser[0]). \
-        click().send_keys(insta_username).perform()
-    stime(1)
-    ePass = browser.find_elements_by_xpath(
-        "//input[@name='password']")
-    stime(2)
-    ActionChains(browser).move_to_element(ePass[0]). \
-        click().send_keys(insta_password).perform()
-
-    
-    stime(5)
-    login_button = browser.find_element_by_xpath(
-        "//form/span/button[text()='Log in']")
-    
-    ActionChains(browser).move_to_element(login_button).click().perform()
-    stime(10)
-        
-    links = OpenLog()
-    new_file = []
-    deleted_urls = []
-    counter = 15
-    for l in links:
-        if l.startswith('https://www.instagram.com/p/'):
-            new_file.append(l)
-    
-    print ('length of file: '+str(len(new_file)))
-    if (counter >= len(new_file)):
-        counter = (len(new_file) - 1)
-    
-    print ('counter: '+str(counter))
-    
     try:
-        print ('DELETING POSTS!')
+        print ('logging in as mobile device to delete')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        while (counter > -1):
-            browser.get(new_file[counter])
-            stime(10)
-            if ("Sorry, this page isn't available." in browser.page_source):
-                deleted_urls.append(new_file[counter])
-                counter -= 1
-            else:                
-                options_button = browser.find_element_by_xpath(
-                    "//span[@aria-label='More options']")
-                ActionChains(browser).move_to_element(options_button).click().perform()                
-                stime(10)
-                delete_button = browser.find_element_by_xpath(
-                    "//button[text()='Delete']")
-                ActionChains(browser).move_to_element(delete_button).click().perform()
-                stime(10)
-                confirm_delete = browser.find_element_by_xpath(
-                    "//button[text()='Delete']")
-                ActionChains(browser).move_to_element(confirm_delete).click().perform()
-                stime(10)
-                deleted_urls.append(new_file[counter])
-                print ('POST DELETED: '+new_file[counter])
-                counter -= 1
+        mobile_emulation = { "deviceName": "Pixel 2" }
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option("mobileEmulation", mobile_emulation)
+        options.add_argument("window-size=500,800")
+        browser = webdriver.Chrome(chrome_options=options)
+        browser.get("https://www.instagram.com/accounts/login/")
+        stime(3)
+        f = open (logintext, 'r')
+        login = f.read().splitlines()
+        f.close()
+        insta_username = login[0]
+        insta_password = login[1]
+            
+        eUser = browser.find_elements_by_xpath(
+            "//input[@name='username']")
+        stime(4)
+        ActionChains(browser).move_to_element(eUser[0]). \
+            click().send_keys(insta_username).perform()
+        stime(4)
+        ePass = browser.find_elements_by_xpath(
+            "//input[@name='password']")
+        stime(4)
+        ActionChains(browser).move_to_element(ePass[0]). \
+            click().send_keys(insta_password).perform()
 
-        l3 = [x for x in new_file if x not in deleted_urls]
-        print ('while loop done and exited successfully')
-        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        WriteToArchive(log_path, l3)	    
-        browser.close()
+        
+        stime(6)
+        login_button = browser.find_element_by_xpath(
+            "//button[text()='Log in']")
+            #"//form/span/button[text()='Log in']")
+                     
+        ActionChains(browser).move_to_element(login_button).click().perform()
+        stime(10)
+            
+        links = OpenLog()
+        new_file = []
+        deleted_urls = []
+        counter = 15
+        for l in links:
+            if l.startswith('https://www.instagram.com/p/'):
+                new_file.append(l)
+        
+        print ('length of file: '+str(len(new_file)))
+        if (counter >= len(new_file)):
+            counter = (len(new_file) - 1)
+        
+        print ('counter: '+str(counter))
+        
+        try:
+            print ('DELETING POSTS!')
+            print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            while (counter > -1):
+                browser.get(new_file[counter])
+                stime(10)
+                if ("Sorry, this page isn't available." in browser.page_source):
+                    deleted_urls.append(new_file[counter])
+                    counter -= 1
+                else:                
+                    options_button = browser.find_element_by_xpath(
+                        "//span[@aria-label='More options']")
+                    ActionChains(browser).move_to_element(options_button).click().perform()                
+                    stime(10)
+                    delete_button = browser.find_element_by_xpath(
+                        "//button[text()='Delete']")
+                    ActionChains(browser).move_to_element(delete_button).click().perform()
+                    stime(10)
+                    confirm_delete = browser.find_element_by_xpath(
+                        "//button[text()='Delete']")
+                    ActionChains(browser).move_to_element(confirm_delete).click().perform()
+                    stime(10)
+                    deleted_urls.append(new_file[counter])
+                    print ('POST DELETED: '+new_file[counter])
+                    counter -= 1
 
+            l3 = [x for x in new_file if x not in deleted_urls]
+            print ('while loop done and exited successfully')
+            print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            WriteToArchive(log_path, l3)	    
+            browser.close()
+
+        except Exception as err:
+            print (err)
+            browser.close()
+            sys.exit()
+    
     except Exception as err:
-        print (err)
-        browser.close()
-        sys.exit()
+        print (err)        
 
 if __name__ == '__main__':
     print ('----------------------------------------------------------------------------------------------------- ')
