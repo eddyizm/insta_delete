@@ -3,6 +3,13 @@ Selenium, BS4 powered script to delete old instagram posts.
 
 Working with selenium can be challenging if you have no previous experience with it. Part of this project was for me to get more comfortable using selenium on an ever changing UI. 
 
+## Updates  
+Added a hard limit on profile posts to make sure it doesn't exceed a preferred minunum. Adjust the variable to make sure that quantity stays.   
+```
+post_counter = 500
+```
+
+
 ## Prerequisites
 
 Download ```chromedriver``` for your system [from here](https://sites.google.com/a/chromium.org/chromedriver/downloads). The script uses chromedriver after setting it in the path variables. Otherwise you can specify the specific location of the executable. 
