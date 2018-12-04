@@ -43,24 +43,30 @@ def parse_href(data):
                 
     return url_list            
 
-def check_posts(data, counter):
+def profile_post_min(counter):
     try:
-        print ('checking post count limit currently set at:'+counter)
+        browser = webdriver.Chrome()
+        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        browser.get("https://www.instagram.com/eddyizm")
+        print ('checking post count limit currently set at: '+str(counter))
         post_count = ''
-        links = BeautifulSoup(data, "html.parser", parse_only=SoupStrainer('a'))
+        stime(10)
+        links = BeautifulSoup(browser.page_source, "html.parser", parse_only=SoupStrainer('a'))
+        browser.close()
         for x in links:
             t = x.get('href')
             if 'profile_posts' in t:
                 post_count = x.text.replace(' posts','')
+                print (post_count)
         if int(post_count.replace(',','')) > counter:
-            return False
+            return True
         else:
             print ('count mininum reached.')
-            return True
+            return False
     except ValueError as err:
+        print ('profile_post_min :ERROR:')
         print (err)
-        return True
-
+        return False
 
 def scroll_to_end():
     browser = webdriver.Chrome()
@@ -150,11 +156,10 @@ def login_to_site():
             while (counter > -1):
                 browser.get(new_file[counter])
                 stime(10)
-                # if check_posts(browser.page_source, post_counter):
-                #     break
-
+                
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
+                    print ('URL not found, removing from list')
                     counter -= 1
                 else:                
                     options_button = browser.find_element_by_xpath(
@@ -203,8 +208,8 @@ if __name__ == '__main__':
     # # manually load html file
     # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
     # WriteToArchive(log_path, URLS)
-
-    login_to_site()
+    if profile_post_min(post_counter):
+        login_to_site()
     print ('----------------------------------------------------------------------------------------------------- ')
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('--------------------------------------- end session ------------------------------------------------- ')
