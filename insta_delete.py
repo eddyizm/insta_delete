@@ -15,6 +15,7 @@ log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
 #ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
 logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
 URLS = []
+post_counter = 500
 
 def stime(seconds):
     return time.sleep(seconds)
@@ -31,8 +32,7 @@ def WriteToArchive(log, data):
                 f.write(str(d)+'\n')
             else:
                 f.write('https://www.instagram.com'+str(d)+'\n')
-            
-             
+          
 def parse_href(data):
     url_list = []
     for link in BeautifulSoup(data, "html.parser", parse_only=SoupStrainer('a') ):
@@ -43,6 +43,25 @@ def parse_href(data):
                 
     return url_list            
 
+def check_posts(data, counter):
+    try:
+        print ('checking post count limit currently set at:'+counter)
+        post_count = ''
+        links = BeautifulSoup(data, "html.parser", parse_only=SoupStrainer('a'))
+        for x in links:
+            t = x.get('href')
+            if 'profile_posts' in t:
+                post_count = x.text.replace(' posts','')
+        if int(post_count.replace(',','')) > counter:
+            return False
+        else:
+            print ('count mininum reached.')
+            return True
+    except ValueError as err:
+        print (err)
+        return True
+
+
 def scroll_to_end():
     browser = webdriver.Chrome()
     get_html = None
@@ -50,8 +69,9 @@ def scroll_to_end():
     print ('scrolling profile to get more urls')
     try:
         browser.get("https://www.instagram.com/eddyizm")
+        #match = check_posts(browser.page_source, post_counter) 
+        match = False
         lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
-        match=False
         count = 0
         while(match==False):
             lastCount = lenOfPage
@@ -59,7 +79,7 @@ def scroll_to_end():
             lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
             count += 1
             # added count to ensure only older images get picked up. 
-            if (lastCount==lenOfPage) and (count > 100):
+            if (lastCount==lenOfPage) and (count > 50):
                 match=True
                 
         get_html = browser.page_source                       
@@ -130,6 +150,9 @@ def login_to_site():
             while (counter > -1):
                 browser.get(new_file[counter])
                 stime(10)
+                # if check_posts(browser.page_source, post_counter):
+                #     break
+
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
                     counter -= 1
