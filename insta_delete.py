@@ -85,7 +85,7 @@ def scroll_to_end():
             lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
             count += 1
             # added count to ensure only older images get picked up. 
-            if (lastCount==lenOfPage) and (count > 25):
+            if (lastCount==lenOfPage) and (count > 50):
                 match=True
                 
         get_html = browser.page_source                       
