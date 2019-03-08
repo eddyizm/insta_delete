@@ -15,7 +15,7 @@ log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
 #ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
 logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
 URLS = []
-post_counter = 500
+post_counter = 250
 
 def stime(seconds):
     return time.sleep(seconds)
@@ -85,7 +85,7 @@ def scroll_to_end():
             lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
             count += 1
             # added count to ensure only older images get picked up. 
-            if (lastCount==lenOfPage) and (count > 50):
+            if (lastCount==lenOfPage) and (count > 25):
                 match=True
                 
         get_html = browser.page_source                       
@@ -108,7 +108,7 @@ def login_to_site():
         options.add_argument("window-size=500,800")
         browser = webdriver.Chrome(chrome_options=options)
         browser.get("https://www.instagram.com/accounts/login/")
-        stime(3)
+        stime(10)
         f = open (logintext, 'r')
         login = f.read().splitlines()
         f.close()
@@ -117,20 +117,21 @@ def login_to_site():
             
         eUser = browser.find_elements_by_xpath(
             "//input[@name='username']")
-        stime(4)
+        stime(10)
         ActionChains(browser).move_to_element(eUser[0]). \
             click().send_keys(insta_username).perform()
-        stime(4)
+        stime(10)
         ePass = browser.find_elements_by_xpath(
             "//input[@name='password']")
-        stime(4)
+        stime(10)
         ActionChains(browser).move_to_element(ePass[0]). \
             click().send_keys(insta_password).perform()
 
         
-        stime(6)
+        stime(10)
         login_button = browser.find_element_by_xpath(
-            "//button[text()='Log in']")
+            "//*[contains(text(), 'Log in')]")
+            #"//button[text()='Log in']")
             #"//form/span/button[text()='Log in']")
                      
         ActionChains(browser).move_to_element(login_button).click().perform()
