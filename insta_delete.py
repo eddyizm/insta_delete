@@ -15,7 +15,7 @@ log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
 #ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
 logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
 URLS = []
-post_counter = 250
+post_counter = 50
 
 def stime(seconds):
     return time.sleep(seconds)
@@ -69,7 +69,7 @@ def profile_post_min(counter):
         return False
 
 def scroll_to_end():
-    browser = webdriver.Chrome()
+    browser = webdriver.Firefox()
     get_html = None
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('scrolling profile to get more urls')
@@ -102,11 +102,12 @@ def login_to_site():
     try:
         print ('logging in as mobile device to delete')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        mobile_emulation = { "deviceName": "Pixel 2" }
-        options = webdriver.ChromeOptions()
-        options.add_experimental_option("mobileEmulation", mobile_emulation)
-        options.add_argument("window-size=500,800")
-        browser = webdriver.Chrome(chrome_options=options)
+        user_agent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16"
+        profile = webdriver.FirefoxProfile() 
+        profile.set_preference("general.useragent.override", user_agent)
+        # driver = webdriver.Firefox(profile)
+        browser = webdriver.Firefox(profile)
+        browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         stime(10)
         f = open (logintext, 'r')
@@ -114,7 +115,6 @@ def login_to_site():
         f.close()
         insta_username = login[0]
         insta_password = login[1]
-            
         eUser = browser.find_elements_by_xpath(
             "//input[@name='username']")
         stime(10)
@@ -127,12 +127,11 @@ def login_to_site():
         ActionChains(browser).move_to_element(ePass[0]). \
             click().send_keys(insta_password).perform()
 
-        
         stime(10)
         login_button = browser.find_element_by_xpath(
-            "//*[contains(text(), 'Log in')]")
-            #"//button[text()='Log in']")
-            #"//form/span/button[text()='Log in']")
+            "//*[contains(text(), 'Log In')]")
+            #"//button[text()='Log In']")
+            #"//form/span/button[text()='Log In']")
                      
         ActionChains(browser).move_to_element(login_button).click().perform()
         stime(10)
