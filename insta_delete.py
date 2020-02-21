@@ -175,15 +175,12 @@ def login_to_site():
                     print ('URL not found, removing from list')
                     counter -= 1
                 else:                
-                    checkhtml = BeautifulSoup(browser.page_source, "html.parser")
-                    with open('debug.html', 'w', encoding='utf-8') as w:
-                        w.write(checkhtml.prettify())
+                    # used this to debug and find html changes.
+                    # checkhtml = BeautifulSoup(browser.page_source, "html.parser")
+                    # with open('debug.html', 'w', encoding='utf-8') as w:
+                    #     w.write(checkhtml.prettify())
                     options_button = browser.find_element_by_xpath(
-                            "//div[@aria-label='More options']/div[@class='wpO6b']");
-                            # "//div[@class='wpO6b' and contains(text(), 'More options']")
-                           # '//div[@aria-label="More options"]')
-                           # find_elements_by_css_selector('[aria-label="More options"]')
-                                                   
+                            "//div[@class='MEAGs']//*[@aria-label='More options']")
                     ActionChains(browser).move_to_element(options_button).click().perform()                
                     stime(10)
                     delete_button = browser.find_element_by_xpath(
