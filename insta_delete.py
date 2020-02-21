@@ -214,18 +214,17 @@ if __name__ == '__main__':
     print ('--------------------------------------- new session ------------------------------------------------- ')
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('----------------------------------------------------------------------------------------------------- ')
-    # file_size = os.stat(log_path).st_size
-    # print ('file size: '+str(file_size))
-    # if (os.stat(log_path).st_size == 0):
-    #     print ('file empty, going to scroll')
-    #     source_data = scroll_to_end()
-    #     URLS = parse_href(source_data)
-    #     WriteToArchive(log_path, URLS)    
-    login_to_site()
+    file_size = os.stat(log_path).st_size
+    print ('file size: '+str(file_size))
+    if (os.stat(log_path).st_size == 0):
+        print ('file empty, going to scroll')
+        source_data = scroll_to_end()
+        URLS = parse_href(source_data)
+        WriteToArchive(log_path, URLS)    
     # # manually load html file
     # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
-    # if profile_post_min(post_counter):
-    #     login_to_site()
+    if profile_post_min(post_counter):
+        login_to_site()
     print ('----------------------------------------------------------------------------------------------------- ')
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('--------------------------------------- end session ------------------------------------------------- ')
