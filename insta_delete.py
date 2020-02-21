@@ -10,10 +10,17 @@ import time
 import os
 import sys
 
+linux = False
 # store urls to delete later
-log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
-#ig_html = r'C:\Users\eddyizm\Downloads\eddyizm.html'
-logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
+if os.name == 'nt':
+    log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
+    logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
+else:
+    firefoxPath="env/geckodriver"
+    logintext = "env/login.txt"
+    log_path = 'env/media_urls.txt'
+    linux = True
+
 URLS = []
 post_counter = 50
 
@@ -45,7 +52,7 @@ def parse_href(data):
 
 def profile_post_min(counter):
     try:
-        browser = webdriver.Chrome()
+        browser = webdriver.Firefox(executable_path=firefoxPath)
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         browser.get("https://www.instagram.com/eddyizm")
         print ('checking post count limit currently set at: '+str(counter))
@@ -69,7 +76,7 @@ def profile_post_min(counter):
         return False
 
 def scroll_to_end():
-    browser = webdriver.Firefox()
+    browser = webdriver.Firefox(executable_path=firefoxPath)
     get_html = None
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('scrolling profile to get more urls')
@@ -105,8 +112,7 @@ def login_to_site():
         user_agent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16"
         profile = webdriver.FirefoxProfile() 
         profile.set_preference("general.useragent.override", user_agent)
-        # driver = webdriver.Firefox(profile)
-        browser = webdriver.Firefox(profile)
+        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         stime(10)
@@ -162,8 +168,14 @@ def login_to_site():
                     print ('URL not found, removing from list')
                     counter -= 1
                 else:                
-                    options_button = browser.find_element_by_xpath(
-                        "//span[@aria-label='More options']")
+                    checkhtml = BeautifulSoup(browser.page_source, "html.parser")
+                    with open('debug.html', 'w', encoding='utf-8') as w:
+                        w.write(checkhtml.prettify())
+                    options_button = browser.find_elements_by_css_selector('[aria-label="More options"]')
+                        #find_element_by_xpath(
+                           # '//*[contains(text(), "More options")]')
+                           # '//div[@aria-label="More options"]')
+                        
                     ActionChains(browser).move_to_element(options_button).click().perform()                
                     stime(10)
                     delete_button = browser.find_element_by_xpath(
@@ -173,8 +185,8 @@ def login_to_site():
                     confirm_delete = browser.find_element_by_xpath(
                         "//button[text()='Delete']")
                     ActionChains(browser).move_to_element(confirm_delete).click().perform()
-                    stime(10)
                     deleted_urls.append(new_file[counter])
+                    stime(10)
                     print ('POST DELETED: '+new_file[counter])
                     counter -= 1
 
@@ -197,19 +209,18 @@ if __name__ == '__main__':
     print ('--------------------------------------- new session ------------------------------------------------- ')
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('----------------------------------------------------------------------------------------------------- ')
-    file_size = os.stat(log_path).st_size
-    print ('file size: '+str(file_size))
-    if (os.stat(log_path).st_size == 0):
-        print ('file empty, going to scroll')
-        source_data = scroll_to_end()
-        URLS = parse_href(source_data)
-        WriteToArchive(log_path, URLS)    
-
+    # file_size = os.stat(log_path).st_size
+    # print ('file size: '+str(file_size))
+    # if (os.stat(log_path).st_size == 0):
+    #     print ('file empty, going to scroll')
+    #     source_data = scroll_to_end()
+    #     URLS = parse_href(source_data)
+    #     WriteToArchive(log_path, URLS)    
+    login_to_site()
     # # manually load html file
     # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
-    # WriteToArchive(log_path, URLS)
-    if profile_post_min(post_counter):
-        login_to_site()
+    # if profile_post_min(post_counter):
+    #     login_to_site()
     print ('----------------------------------------------------------------------------------------------------- ')
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('--------------------------------------- end session ------------------------------------------------- ')
