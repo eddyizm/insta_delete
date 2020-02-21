@@ -15,6 +15,7 @@ linux = False
 if os.name == 'nt':
     log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
     logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
+
 else:
     firefoxPath="env/geckodriver"
     logintext = "env/login.txt"
@@ -76,7 +77,10 @@ def profile_post_min(counter):
         return False
 
 def scroll_to_end():
-    browser = webdriver.Firefox(executable_path=firefoxPath)
+    if linux:
+        browser = webdriver.Firefox(executable_path=firefoxPath)
+    else:
+        browser = webdriver.Firefox()        
     get_html = None
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('scrolling profile to get more urls')
@@ -112,7 +116,10 @@ def login_to_site():
         user_agent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16"
         profile = webdriver.FirefoxProfile() 
         profile.set_preference("general.useragent.override", user_agent)
-        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
+        if linux:
+            browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
+        else:
+            browser = webdriver.Firefox(firefox_profile = profile)
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         stime(10)
@@ -171,11 +178,12 @@ def login_to_site():
                     checkhtml = BeautifulSoup(browser.page_source, "html.parser")
                     with open('debug.html', 'w', encoding='utf-8') as w:
                         w.write(checkhtml.prettify())
-                    options_button = browser.find_elements_by_css_selector('[aria-label="More options"]')
-                        #find_element_by_xpath(
-                           # '//*[contains(text(), "More options")]')
+                    options_button = browser.find_element_by_xpath(
+                            "//div[@aria-label='More options']/div[@class='wpO6b']");
+                            # "//div[@class='wpO6b' and contains(text(), 'More options']")
                            # '//div[@aria-label="More options"]')
-                        
+                           # find_elements_by_css_selector('[aria-label="More options"]')
+                                                   
                     ActionChains(browser).move_to_element(options_button).click().perform()                
                     stime(10)
                     delete_button = browser.find_element_by_xpath(
