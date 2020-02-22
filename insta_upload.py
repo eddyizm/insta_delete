@@ -3,8 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 # from selenium.common.exceptions import TimeoutException
 # from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.chrome.options import Options
-# from bs4 import BeautifulSoup, SoupStrainer
+from bs4 import BeautifulSoup
 from datetime import datetime
 from glob import glob
 from selenium.webdriver.remote.file_detector import UselessFileDetector
@@ -19,6 +18,7 @@ firefoxPath="env/geckodriver"
 logintext = "env/login.txt"
 image_path = "/home/eddyizm-hp/HP/images"
 
+
 def platform_vars():
     if os.name == 'nt':
         # log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
@@ -30,6 +30,13 @@ def platform_vars():
         # log_path = 'env/media_urls.txt'
         linux = True
     return logintext, linux, firefoxPath
+
+
+def dump_html(selenium_driver : str):
+    ''' function to out html for inspection when luck is not on  my side '''
+    checkhtml = BeautifulSoup(selenium_driver.page_source, "html.parser")
+    with open('debug.html', 'w', encoding='utf-8') as w:
+        w.write(checkhtml.prettify())
 
 
 def get_images(folder : str):
@@ -111,7 +118,31 @@ def upload_image(browser_object : str, filepath : str):
 
 def process_image(browser_object : str, tags : str):
     try:
+        dump_html(browser_object)
+        print('resizing image')
+        resize_button = browser_object.find_element_by_xpath(
+                            "//button[@class='pHnkA']//span[contains(text(),'Expand')]")
         time.sleep(return_randomtime())
+        ActionChains(browser_object).move_to_element(resize_button).click().perform()
+        time.sleep(return_randomtime())
+        print('moving to caption screen')
+        next_button = browser_object.find_element_by_xpath(
+                        "//button[text()='Next']")
+        time.sleep(return_randomtime())
+        ActionChains(browser_object).move_to_element(next_button).click().perform()
+        time.sleep(return_randomtime())
+        add_text = browser_object.find_element_by_xpath(
+                        "//textarea[contains(@aria-label,'Write a caption...')]")
+        time.sleep(return_randomtime())
+        print('writing caption')
+        ActionChains(browser_object).move_to_element(add_text).click().send_keys(tags).perform()
+        time.sleep(return_randomtime())
+        share_button = browser_object.find_element_by_xpath(
+                        "//button[text()='Share']")
+        time.sleep(return_randomtime())
+        ActionChains(browser_object).move_to_element(share_button).click().perform()
+        time.sleep(return_randomtime())
+        print('post succesful!')
         return True
     except Exception as ex:
         print('error in process_image():', ex)
@@ -121,9 +152,14 @@ def process_image(browser_object : str, tags : str):
 def main():
     driver = login_to_site()
     file, tag = get_images(image_path)
-    # print(file, tag)
     next_driver = upload_image(driver, file)
-    process_image(next_driver, tag)   
+    combined_tags = f'#{tag} #eddyizm'
+    if process_image(next_driver, combined_tags):
+        print(f'TODO: file posted successfully, now delete the image from local disk: {file}')
+        os.remove(file)
+    else:
+        print(f'error posting file. check the logs') 
+
 
 if __name__ == '__main__':
     main()
