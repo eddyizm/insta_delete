@@ -118,7 +118,6 @@ def upload_image(browser_object : str, filepath : str):
 
 def process_image(browser_object : str, tags : str):
     try:
-        dump_html(browser_object)
         print('resizing image')
         resize_button = browser_object.find_element_by_xpath(
                             "//button[@class='pHnkA']//span[contains(text(),'Expand')]")
@@ -131,8 +130,9 @@ def process_image(browser_object : str, tags : str):
         time.sleep(return_randomtime())
         ActionChains(browser_object).move_to_element(next_button).click().perform()
         time.sleep(return_randomtime())
+        # dump_html(browser_object)
         add_text = browser_object.find_element_by_xpath(
-                        "//textarea[contains(@aria-label,'Write a caption...')]")
+                        "//textarea[@aria-label='Write a caption…']")
         time.sleep(return_randomtime())
         print('writing caption')
         ActionChains(browser_object).move_to_element(add_text).click().send_keys(tags).perform()
@@ -143,9 +143,11 @@ def process_image(browser_object : str, tags : str):
         ActionChains(browser_object).move_to_element(share_button).click().perform()
         time.sleep(return_randomtime())
         print('post succesful!')
+        browser_object.close()
         return True
     except Exception as ex:
         print('error in process_image():', ex)
+        browser_object.close()
         return False
 
 
@@ -155,7 +157,7 @@ def main():
     next_driver = upload_image(driver, file)
     combined_tags = f'#{tag} #eddyizm'
     if process_image(next_driver, combined_tags):
-        print(f'TODO: file posted successfully, now delete the image from local disk: {file}')
+        print(f'file posted successfully,\n now delete the image from local disk: {file}')
         os.remove(file)
     else:
         print(f'error posting file. check the logs') 
