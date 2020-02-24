@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
-# from selenium.common.exceptions import TimeoutException
+# 15 11 * * 1-7  /usr/bin/env bash -c 'cd /home/eddyizm-hp/Documents/insta_delete/ && source /home/eddyizm-hp/Documents/insta_delete/env/bin/activate && python /home/eddyizm-hp/Documents/insta_delete/insta_upload.py'da >> /home/eddyizm-hp/Documents/insta_delete/env/upload.log
 # from selenium.webdriver.support.ui import WebDriverWait
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -157,11 +157,12 @@ def main():
     next_driver = upload_image(driver, file)
     combined_tags = f'#{tag} #eddyizm'
     if process_image(next_driver, combined_tags):
-        print(f'file posted successfully,\n now delete the image from local disk: {file}')
+        print(f'file posted successfully,\nnow delete the image from local disk: {file}')
         os.remove(file)
     else:
         print(f'error posting file. check the logs') 
 
 
 if __name__ == '__main__':
+    time.sleep(randrange(1,3600))
     main()
