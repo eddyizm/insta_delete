@@ -51,7 +51,7 @@ def get_images(folder : str):
 
 
 def return_randomtime():
-    return randrange(5,35)
+    return randrange(13,45)
 
 
 def login_to_site():
@@ -164,5 +164,5 @@ def main():
 
 
 if __name__ == '__main__':
-    time.sleep(randrange(1,3600))
+    # time.sleep(randrange(1,3600))
     main()
