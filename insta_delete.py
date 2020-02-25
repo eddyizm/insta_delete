@@ -15,6 +15,7 @@ linux = False
 if os.name == 'nt':
     log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
     logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
+    firefoxPath=r'C:\Users\eddyizm\Source\Repos\InstaPy\assets\geckodriver.exe'
 
 else:
     firefoxPath="env/geckodriver"
@@ -215,7 +216,7 @@ if __name__ == '__main__':
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('----------------------------------------------------------------------------------------------------- ')
     file_size = os.stat(log_path).st_size
-    print ('file size: '+str(file_size))
+    print ('file size: '+ str(file_size))
     if (os.stat(log_path).st_size == 0):
         print ('file empty, going to scroll')
         source_data = scroll_to_end()
