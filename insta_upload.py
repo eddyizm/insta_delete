@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
-# 15 11 * * 1-7  /usr/bin/env bash -c 'cd /home/eddyizm-hp/Documents/insta_delete/ && source /home/eddyizm-hp/Documents/insta_delete/env/bin/activate && python /home/eddyizm-hp/Documents/insta_delete/insta_upload.py'da >> /home/eddyizm-hp/Documents/insta_delete/env/upload.log
-# from selenium.webdriver.support.ui import WebDriverWait
+# crontab for bash script:
+# 07 7 * * 1-7 export DISPLAY=:0; /home/eddyizm-hp/Documents/insta_delete/upload.sh  >> /home/eddyizm-hp/HP/upload.log
 from bs4 import BeautifulSoup
 from datetime import datetime
 from glob import glob
@@ -12,6 +12,7 @@ import os
 import sys
 from random import randrange
 import pyautogui
+# from selenium.webdriver.support.ui import WebDriverWait
 
 ''' writing a script to automate photo uploads '''
 firefoxPath="env/geckodriver"
@@ -19,17 +20,16 @@ logintext = "env/login.txt"
 image_path = "/home/eddyizm-hp/HP/images"
 
 
-def platform_vars():
-    if os.name == 'nt':
-        # log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
-        logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
-        linux = False
-    else:
-        firefoxPath="env/geckodriver"
-        logintext = "env/login.txt"
-        # log_path = 'env/media_urls.txt'
-        linux = True
-    return logintext, linux, firefoxPath
+''' holding this for testing on windows '''
+# def platform_vars():
+#     if os.name == 'nt':
+#         logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
+#         linux = False
+#     else:
+#         firefoxPath="env/geckodriver"
+#         logintext = "env/login.txt"
+#         linux = True
+#     return logintext, linux, firefoxPath
 
 
 def dump_html(selenium_driver : str):
@@ -111,7 +111,6 @@ def upload_image(browser_object : str, filepath : str):
         print('file pushed to browser. now to resize and add the tags.')
         time.sleep(return_randomtime())
         return browser_object
-        # TODO add method to resize photo and apply a couple of tags, move to next screen and post.                
     except Exception as ex:
         print('error in upload_image():', ex)
         
@@ -164,5 +163,5 @@ def main():
 
 
 if __name__ == '__main__':
-    # time.sleep(randrange(1,3600))
+    time.sleep(randrange(1,3600))
     main()
