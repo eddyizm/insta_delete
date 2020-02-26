@@ -114,7 +114,7 @@ def login_to_site():
     try:
         print ('logging in as mobile device to delete')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        user_agent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16"
+        user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
         profile = webdriver.FirefoxProfile() 
         profile.set_preference("general.useragent.override", user_agent)
         if linux:
