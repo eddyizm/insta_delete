@@ -94,7 +94,8 @@ def login_to_site():
         return browser
     except Exception as err:
         print('error in LoginToSite')
-        print (err)        
+        print (err)
+        browser.close()        
 
 
 def upload_image(browser_object : str, filepath : str):
