@@ -51,7 +51,7 @@ def get_images(folder : str):
 
 
 def return_randomtime():
-    return randrange(13,45)
+    return randrange(25,60)
 
 
 def login_to_site():
