@@ -113,6 +113,7 @@ def upload_image(browser_object : str, filepath : str):
         time.sleep(return_randomtime())
         return browser_object
     except Exception as ex:
+        browser_object.close()
         print('error in upload_image():', ex)
         
 
@@ -152,17 +153,30 @@ def process_image(browser_object : str, tags : str):
 
 
 def main():
-    driver = login_to_site()
-    file, tag = get_images(image_path)
-    next_driver = upload_image(driver, file)
-    combined_tags = f'#{tag} #eddyizm'
-    if process_image(next_driver, combined_tags):
-        print(f'file posted successfully,\nnow delete the image from local disk: {file}')
-        os.remove(file)
-    else:
-        print(f'error posting file. check the logs') 
-
+    attempts = 3
+    while attempts > 0:
+        attempts = attempts -1
+        driver = login_to_site()
+        if not driver:
+            print('attempt failed. trying again')
+            time.sleep(return_randomtime())
+            continue
+        file, tag = get_images(image_path)
+        next_driver = upload_image(driver, file)
+        if not next_driver:
+            print('attempt failed. trying again')
+            time.sleep(return_randomtime())
+            continue
+        combined_tags = f'#{tag} #eddyizm'
+        if process_image(next_driver, combined_tags):
+            print(f'file posted successfully,\nnow delete the image from local disk: {file}')
+            os.remove(file)
+            break
+        else:
+            print(f'error posting file. check the logs')
+            time.sleep(return_randomtime())
+            continue
 
 if __name__ == '__main__':
-    time.sleep(randrange(1,3600))
+    # time.sleep(randrange(1,3600))
     main()
