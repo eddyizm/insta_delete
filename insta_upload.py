@@ -1,18 +1,21 @@
 # -*- coding: UTF-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.remote.file_detector import UselessFileDetector
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 # crontab for bash script:
 # 07 7 * * 1-7 export DISPLAY=:0; /home/eddyizm-hp/Documents/insta_delete/upload.sh  >> /home/eddyizm-hp/HP/upload.log
 from bs4 import BeautifulSoup
 from datetime import datetime
 from glob import glob
-from selenium.webdriver.remote.file_detector import UselessFileDetector
 import time
 import os
 import sys
 from random import randrange
 import pyautogui
-# from selenium.webdriver.support.ui import WebDriverWait
+
 
 ''' writing a script to automate photo uploads '''
 firefoxPath="env/geckodriver"
@@ -91,6 +94,7 @@ def login_to_site():
         # skip over save login credentials screen
         print('login successful, return browser to homepage')
         browser.get("https://www.instagram.com/")
+        time.sleep(return_randomtime())
         return browser
     except Exception as err:
         print('error in LoginToSite')
@@ -116,22 +120,22 @@ def upload_image(browser_object : str, filepath : str):
         browser_object.close()
         print('error in upload_image():', ex)
         
-
 def process_image(browser_object : str, tags : str):
     try:
         print('resizing image')
-        resize_button = browser_object.find_element_by_xpath(
-                            "//button[@class='pHnkA']//span[contains(text(),'Expand')]")
-        time.sleep(return_randomtime())
-        ActionChains(browser_object).move_to_element(resize_button).click().perform()
-        time.sleep(return_randomtime())
+        resize_button = WebDriverWait(browser_object, 45).until(EC.element_to_be_clickable((By.XPATH,"//button[@class='pHnkA']")))
+        if not resize_button:                           
+            ActionChains(browser_object).move_to_element(resize_button).click().perform()
+            time.sleep(return_randomtime())
+        
         print('moving to caption screen')
+        time.sleep(return_randomtime())
         next_button = browser_object.find_element_by_xpath(
                         "//button[text()='Next']")
         time.sleep(return_randomtime())
         ActionChains(browser_object).move_to_element(next_button).click().perform()
         time.sleep(return_randomtime())
-        # dump_html(browser_object)
+        
         add_text = browser_object.find_element_by_xpath(
                         "//textarea[@aria-label='Write a caption…']")
         time.sleep(return_randomtime())
@@ -153,7 +157,7 @@ def process_image(browser_object : str, tags : str):
 
 
 def main():
-    attempts = 3
+    attempts = 2
     while attempts > 0:
         attempts = attempts -1
         driver = login_to_site()
@@ -173,10 +177,10 @@ def main():
             os.remove(file)
             break
         else:
-            print(f'error posting file. check the logs')
+            print(f'error posting file.')
             time.sleep(return_randomtime())
             continue
 
 if __name__ == '__main__':
-    # time.sleep(randrange(1,3600))
+    time.sleep(randrange(1,3600))
     main()
