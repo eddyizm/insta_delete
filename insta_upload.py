@@ -18,21 +18,15 @@ import pyautogui
 
 
 ''' writing a script to automate photo uploads '''
-firefoxPath="env/geckodriver"
-logintext = "env/login.txt"
-image_path = "/home/eddyizm-hp/HP/images"
+if os.name == 'nt':
+    logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'
+    firefoxPath= r'C:\Users\eddyizm\Source\Repos\InstaPy\assets\geckodriver.exe'
+    image_path = r'C:\Users\eddyizm\HP\images'
+else:
+    firefoxPath="env/geckodriver"
+    logintext = "env/login.txt"
+    image_path = "/home/eddyizm-hp/HP/images"
 
-
-''' holding this for testing on windows '''
-# def platform_vars():
-#     if os.name == 'nt':
-#         logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
-#         linux = False
-#     else:
-#         firefoxPath="env/geckodriver"
-#         logintext = "env/login.txt"
-#         linux = True
-#     return logintext, linux, firefoxPath
 
 
 def dump_html(selenium_driver : str):
@@ -62,7 +56,7 @@ def login_to_site():
         print ('logging in as mobile device')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
-        profile = webdriver.FirefoxProfile() 
+        profile = webdriver.FirefoxProfile()
         profile.set_preference("general.useragent.override", user_agent)
         browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
         browser.set_window_size(360,640)
@@ -88,7 +82,7 @@ def login_to_site():
         time.sleep(return_randomtime())
         login_button = browser.find_element_by_xpath(
             "//*[contains(text(), 'Log In')]")
-            
+
         ActionChains(browser).move_to_element(login_button).click().perform()
         time.sleep(return_randomtime())
         # skip over save login credentials screen
@@ -99,7 +93,7 @@ def login_to_site():
     except Exception as err:
         print('error in LoginToSite')
         print (err)
-        browser.close()        
+        browser.close()
 
 
 def upload_image(browser_object : str, filepath : str):
@@ -111,31 +105,32 @@ def upload_image(browser_object : str, filepath : str):
         ActionChains(browser_object).move_to_element(options_button).click().perform()
         time.sleep(return_randomtime())
         print('selecting file on local file system')
-        pyautogui.write(filepath, interval=0.25) 
+        pyautogui.write(filepath, interval=0.25)
         pyautogui.press('return')
         print('file pushed to browser. now to resize and add the tags.')
-        time.sleep(return_randomtime())
+        time.sleep(30)
         return browser_object
     except Exception as ex:
         browser_object.close()
         print('error in upload_image():', ex)
-        
+
+
 def process_image(browser_object : str, tags : str):
     try:
-        print('resizing image')
-        resize_button = WebDriverWait(browser_object, 45).until(EC.element_to_be_clickable((By.XPATH,"//button[@class='pHnkA']")))
-        if not resize_button:                           
-            ActionChains(browser_object).move_to_element(resize_button).click().perform()
-            time.sleep(return_randomtime())
-        
+        # print('resizing image')
+        # resize_button = WebDriverWait(browser_object, 45).until(EC.element_to_be_clickable((By.XPATH,"//button[@class='pHnkA']")))
+        # if not resize_button:
+        #     ActionChains(browser_object).move_to_element(resize_button).click().perform()
+        #     time.sleep(return_randomtime())
+        dump_html(browser_object)
         print('moving to caption screen')
-        time.sleep(return_randomtime())
+        time.sleep(45)
         next_button = browser_object.find_element_by_xpath(
                         "//button[text()='Next']")
         time.sleep(return_randomtime())
         ActionChains(browser_object).move_to_element(next_button).click().perform()
         time.sleep(return_randomtime())
-        
+
         add_text = browser_object.find_element_by_xpath(
                         "//textarea[@aria-label='Write a caption…']")
         time.sleep(return_randomtime())
@@ -157,7 +152,7 @@ def process_image(browser_object : str, tags : str):
 
 
 def main():
-    attempts = 2
+    attempts = 3
     while attempts > 0:
         attempts = attempts -1
         driver = login_to_site()
@@ -182,5 +177,5 @@ def main():
             continue
 
 if __name__ == '__main__':
-    time.sleep(randrange(1,3600))
+    time.sleep(randrange(1,1800))
     main()
