@@ -166,7 +166,7 @@ def main():
             print('attempt failed. trying again')
             time.sleep(return_randomtime())
             continue
-        combined_tags = f'#{tag} #eddyizm'
+        combined_tags = f'#{tag} #eddyizm | https://eddyizm.com'
         if process_image(next_driver, combined_tags):
             print(f'file posted successfully,\nnow delete the image from local disk: {file}')
             os.remove(file)
