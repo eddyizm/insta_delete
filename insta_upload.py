@@ -15,6 +15,7 @@ import os
 import sys
 from random import randrange
 import pyautogui
+pyautogui.FAILSAFE = False
 
 
 ''' writing a script to automate photo uploads '''
@@ -26,7 +27,6 @@ else:
     firefoxPath="env/geckodriver"
     logintext = "env/login.txt"
     image_path = "/home/eddyizm-hp/HP/images"
-
 
 
 def dump_html(selenium_driver : str):
@@ -177,5 +177,5 @@ def main():
             continue
 
 if __name__ == '__main__':
-    time.sleep(randrange(1,1800))
+    time.sleep(randrange(1,3600))
     main()

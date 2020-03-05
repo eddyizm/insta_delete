@@ -1,4 +1,7 @@
-# insta_delete
+# insta_delete / insta_upload
+
+* please see below for [insta_upload](#upload) details
+
 Selenium, BS4 powered script to delete old instagram posts.
 
 Working with selenium can be challenging if you have no previous experience with it. Part of this project was for me to get more comfortable using selenium on an ever changing UI. 
@@ -108,3 +111,5 @@ I'll be adding a few options to fine tune and make it a little more reliable.
 1. Capture the date of the post in order to delete by date.
 2. Get all the hyperlinks of the images in bulk, while scrolling and not the tail end.
 
+<a name="upload"></a>
+# insta_upload
