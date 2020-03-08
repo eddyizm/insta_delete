@@ -2,6 +2,8 @@
 
 * please see below for [insta_upload](#upload) details
 
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L3L01HI5A)
+
 Selenium, BS4 powered script to delete old instagram posts.
 
 Working with selenium can be challenging if you have no previous experience with it. Part of this project was for me to get more comfortable using selenium on an ever changing UI. 

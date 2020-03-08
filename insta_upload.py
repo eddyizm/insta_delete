@@ -117,12 +117,7 @@ def upload_image(browser_object : str, filepath : str):
 
 def process_image(browser_object : str, tags : str):
     try:
-        # print('resizing image')
-        # resize_button = WebDriverWait(browser_object, 45).until(EC.element_to_be_clickable((By.XPATH,"//button[@class='pHnkA']")))
-        # if not resize_button:
-        #     ActionChains(browser_object).move_to_element(resize_button).click().perform()
-        #     time.sleep(return_randomtime())
-        dump_html(browser_object)
+        # dump_html(browser_object)
         print('moving to caption screen')
         time.sleep(45)
         next_button = browser_object.find_element_by_xpath(
