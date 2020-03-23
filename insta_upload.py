@@ -94,6 +94,7 @@ def login_to_site():
         print('error in LoginToSite')
         print (err)
         browser.close()
+        browser.quit()
 
 
 def upload_image(browser_object : str, filepath : str):
@@ -112,6 +113,7 @@ def upload_image(browser_object : str, filepath : str):
         return browser_object
     except Exception as ex:
         browser_object.close()
+        browser_object.quit()
         print('error in upload_image():', ex)
 
 
@@ -143,6 +145,7 @@ def process_image(browser_object : str, tags : str):
     except Exception as ex:
         print('error in process_image():', ex)
         browser_object.close()
+        browser_object.quit()
         return False
 
 
@@ -172,5 +175,5 @@ def main():
             continue
 
 if __name__ == '__main__':
-    time.sleep(randrange(1,3600))
+    time.sleep(randrange(1,3000))
     main()

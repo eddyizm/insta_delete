@@ -153,7 +153,7 @@ def login_to_site():
         links = OpenLog()
         new_file = []
         deleted_urls = []
-        counter = 15
+        counter = 10
         for l in links:
             if l.startswith('https://www.instagram.com/p/'):
                 new_file.append(l)
