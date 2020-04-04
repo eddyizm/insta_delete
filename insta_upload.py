@@ -95,7 +95,6 @@ def login_to_site():
     except Exception as err:
         print('error in LoginToSite')
         print (err)
-        browser.close()
         browser.quit()
 
 
@@ -114,7 +113,6 @@ def upload_image(browser_object : str, filepath : str):
         time.sleep(30)
         return browser_object
     except Exception as ex:
-        browser_object.close()
         browser_object.quit()
         print('error in upload_image():', ex)
 
@@ -142,11 +140,10 @@ def process_image(browser_object : str, tags : str):
         ActionChains(browser_object).move_to_element(share_button).click().perform()
         time.sleep(return_randomtime())
         print('post succesful!')
-        browser_object.close()
+        browser_object.quit()
         return True
     except Exception as ex:
         print('error in process_image():', ex)
-        browser_object.close()
         browser_object.quit()
         return False
 
