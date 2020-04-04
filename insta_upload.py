@@ -13,7 +13,7 @@ from glob import glob
 import time
 import os
 import sys
-from random import randrange
+from random import randrange, shuffle
 import pyautogui
 pyautogui.FAILSAFE = False
 
@@ -37,7 +37,9 @@ def dump_html(selenium_driver : str):
 
 
 def get_images(folder : str):
+    ''' get a list of image from a folder recursively and randomize before returning one for posting '''
     folders = glob(folder+'/**/*.jpg', recursive=True)
+    shuffle(folders) 
     fullpath = ''
     for filename in folders:
         if os.path.isfile(filename):
