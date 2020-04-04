@@ -1,24 +1,20 @@
 # -*- coding: UTF-8 -*-
+''' writing a script to automate photo uploads '''
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.file_detector import UselessFileDetector
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-# crontab for bash script:
-# 07 7 * * 1-7 export DISPLAY=:0; /home/eddyizm-hp/Documents/insta_delete/upload.sh  >> /home/eddyizm-hp/HP/upload.log
 from bs4 import BeautifulSoup
 from datetime import datetime
 from glob import glob
 import time
 import os
-import sys
 from random import randrange, shuffle
 import pyautogui
 pyautogui.FAILSAFE = False
+# crontab for bash script:
+# 07 7 * * 1-7 export DISPLAY=:0; /home/eddyizm-hp/Documents/insta_delete/upload.sh  >> /home/eddyizm-hp/HP/upload.log
 
 
-''' writing a script to automate photo uploads '''
 if os.name == 'nt':
     logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'
     firefoxPath= r'C:\Users\eddyizm\Source\Repos\InstaPy\assets\geckodriver.exe'
