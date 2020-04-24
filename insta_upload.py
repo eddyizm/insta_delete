@@ -19,10 +19,12 @@ if os.name == 'nt':
     logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'
     firefoxPath= r'C:\Users\eddyizm\Source\Repos\InstaPy\assets\geckodriver.exe'
     image_path = r'C:\Users\eddyizm\HP\images'
+    desk_profile = r'C:\Users\eddyizm\AppData\Roaming\Mozilla\Firefox\Profiles\nljvmxt1.default'
 else:
     firefoxPath="env/geckodriver"
     logintext = "env/login.txt"
     image_path = "/home/eddyizm-hp/HP/images"
+    desk_profile = ''
 
 
 def dump_html(selenium_driver : str):
@@ -54,9 +56,10 @@ def login_to_site():
         print ('logging in as mobile device')
         print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
-        profile = webdriver.FirefoxProfile()
+        profile = webdriver.FirefoxProfile(desk_profile)
         profile.set_preference("general.useragent.override", user_agent)
-        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
+        time.sleep(return_randomtime())
+        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath, log_path='env/geckodriver.log')
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         time.sleep(return_randomtime())
