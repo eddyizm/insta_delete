@@ -28,7 +28,7 @@ else:
     firefoxPath="env/geckodriver"
     logintext = "env/login.txt"
     image_path = "/home/eddyizm-hp/HP/images"
-    desk_profile = ''
+    desk_profile = r'/home/eddyizm-hp/.mozilla/firefox/69f6brir.default'
 
 
 def dump_html(selenium_driver : str):
@@ -188,5 +188,5 @@ def main():
             continue
 
 if __name__ == '__main__':
-    time.sleep(randrange(1,3000))
+    # time.sleep(randrange(1,3000))
     main()
