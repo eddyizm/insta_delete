@@ -10,6 +10,10 @@ import time
 import os
 from random import randrange, shuffle
 import pyautogui
+# import twitter bot to upload image there as well
+import sys
+sys.path.append(r'C:\Users\eddyizm\Source\repo\twitterbot/')
+from post_image import tweet_photos, tweepy_creds, search_twtr, fave_tweet
 pyautogui.FAILSAFE = False
 # crontab for bash script:
 # 07 7 * * 1-7 export DISPLAY=:0; /home/eddyizm-hp/Documents/insta_delete/upload.sh  >> /home/eddyizm-hp/HP/upload.log
@@ -48,7 +52,8 @@ def get_images(folder : str):
 
 
 def return_randomtime():
-    return randrange(25,60)
+    #return randrange(25,60)
+    return randrange(10,30)
 
 
 def login_to_site():
@@ -59,7 +64,7 @@ def login_to_site():
         profile = webdriver.FirefoxProfile(desk_profile)
         profile.set_preference("general.useragent.override", user_agent)
         time.sleep(return_randomtime())
-        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath, log_path='env/geckodriver.log')
+        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath, service_log_path='env/geckodriver.log')
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         time.sleep(return_randomtime())
@@ -108,7 +113,13 @@ def upload_image(browser_object : str, filepath : str):
         print('selecting file on local file system')
         pyautogui.write(filepath, interval=0.25)
         pyautogui.press('return')
-        print('file pushed to browser. now to resize and add the tags.')
+        pyautogui.press('enter')
+        btn = pyautogui.locateOnScreen('screenshots/open.png')
+        if btn:
+            top = (btn[0] + (btn[2]/2))
+            bottom = (btn[1] + (btn[3]/2))
+            pyautogui.click(x=top, y=bottom)
+            print('file pushed to browser. now to resize and add the tags.')
         time.sleep(30)
         return browser_object
     except Exception as ex:
@@ -119,14 +130,14 @@ def upload_image(browser_object : str, filepath : str):
 def process_image(browser_object : str, tags : str):
     try:
         # dump_html(browser_object)
-        print('moving to caption screen')
-        time.sleep(45)
-        next_button = browser_object.find_element_by_xpath(
-                        "//button[text()='Next']")
+        time.sleep(60)
+        btn = pyautogui.locateOnScreen('screenshots/next.png')
+        if btn:
+            top = (btn[0] + (btn[2]/2))
+            bottom = (btn[1] + (btn[3]/2))
+            pyautogui.click(x=top, y=bottom)
+            print('found next button, moving to caption screen')
         time.sleep(return_randomtime())
-        ActionChains(browser_object).move_to_element(next_button).click().perform()
-        time.sleep(return_randomtime())
-
         add_text = browser_object.find_element_by_xpath(
                         "//textarea[@aria-label='Write a caption…']")
         time.sleep(return_randomtime())
@@ -164,8 +175,12 @@ def main():
             continue
         combined_tags = f'#{tag} #eddyizm | https://eddyizm.com'
         if process_image(next_driver, combined_tags):
-            print(f'file posted successfully,\nnow delete the image from local disk: {file}')
-            os.remove(file)
+            print(f'file posted successfully,\nnow going to post to twitterbot: {file}')
+            twitter_api = tweepy_creds()
+            tweet_photos(twitter_api, file, tag)
+            search_results = search_twtr(twitter_api, tag)
+            fave_tweet(twitter_api, search_results)
+            # os.remove(file)
             break
         else:
             print(f'error posting file.')
