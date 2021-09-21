@@ -9,30 +9,42 @@ from datetime import datetime
 import time
 import os
 import sys
+import json
 
 linux = False
-# store urls to delete later
-if os.name == 'nt':
-    log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
-    logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
-    firefoxPath=r'C:\Users\eddyizm\Source\Repos\InstaPy\assets\geckodriver.exe'
-
-else:
-    firefoxPath="env/geckodriver"
-    logintext = "env/login.txt"
-    log_path = 'env/media_urls.txt'
-    linux = True
-
 URLS = []
 post_counter = 50
+CONFIG = r"C:\Users\eddyizm\HP\config.json"
+
+def get_keys():
+    with open(CONFIG, 'r') as myfile:
+        keys = myfile.read()
+        return json.loads(keys)
+
+settings = get_keys()
+insta_username = settings['instagram']['login']
+insta_password = settings['instagram']['pass']
+
+if os.name == 'nt':
+    log_path = settings['windows']['log_path']
+    # log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
+    firefoxPath= settings['windows']['firefoxPath']
+else:
+    firefoxPath="env/geckodriver"
+    # logintext = "env/login.txt"
+    # log_path = 'env/media_urls.txt'
+    linux = True
+
 
 def stime(seconds):
     return time.sleep(seconds)
+
 
 def OpenLog():
     with open(log_path, 'r', encoding= 'utf-8') as g:
         lines = g.read().splitlines()
         return (lines)
+
 
 def WriteToArchive(log, data):
     with open(log, 'w', encoding= 'utf-8') as f:
@@ -41,7 +53,8 @@ def WriteToArchive(log, data):
                 f.write(str(d)+'\n')
             else:
                 f.write('https://www.instagram.com'+str(d)+'\n')
-          
+
+
 def parse_href(data):
     url_list = []
     for link in BeautifulSoup(data, "html.parser", parse_only=SoupStrainer('a') ):
@@ -51,6 +64,7 @@ def parse_href(data):
                 url_list.append(t)
                 
     return url_list            
+
 
 def profile_post_min(counter):
     try:
@@ -78,10 +92,11 @@ def profile_post_min(counter):
         return False
 
 def scroll_to_end():
-    if linux:
-        browser = webdriver.Firefox(executable_path=firefoxPath)
-    else:
-        browser = webdriver.Firefox()        
+    browser = webdriver.Firefox(executable_path=firefoxPath)
+    # if linux:
+    #     browser = webdriver.Firefox(executable_path=firefoxPath)
+    # else:
+    #     browser = webdriver.Firefox()        
     get_html = None
     print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print ('scrolling profile to get more urls')
@@ -107,8 +122,8 @@ def scroll_to_end():
     except Exception as err:
         print (err)
         browser.close()
-    
     return get_html
+
 
 def login_to_site():
     try:
@@ -117,18 +132,19 @@ def login_to_site():
         user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
         profile = webdriver.FirefoxProfile() 
         profile.set_preference("general.useragent.override", user_agent)
-        if linux:
-            browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
-        else:
-            browser = webdriver.Firefox(firefox_profile = profile)
+        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
+        # if linux:
+        #     browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
+        # else:
+        #     browser = webdriver.Firefox(firefox_profile = profile)
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         stime(10)
-        f = open (logintext, 'r')
-        login = f.read().splitlines()
-        f.close()
-        insta_username = login[0]
-        insta_password = login[1]
+        # f = open (logintext, 'r')
+        # login = f.read().splitlines()
+        # f.close()
+        # insta_username = login[0]
+        # insta_password = login[1]
         eUser = browser.find_elements_by_xpath(
             "//input[@name='username']")
         stime(10)
@@ -209,6 +225,7 @@ def login_to_site():
     
     except Exception as err:
         print (err)        
+
 
 if __name__ == '__main__':
     print ('----------------------------------------------------------------------------------------------------- ')
