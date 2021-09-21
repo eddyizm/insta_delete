@@ -15,13 +15,11 @@ import sys
 sys.path.append(r'C:\Users\eddyizm\Source\repo\twitterbot/')
 from post_image import tweet_photos, tweepy_creds, search_twtr, fave_tweet
 pyautogui.FAILSAFE = False
-# crontab for bash script:
-# 07 7 * * 1-7 export DISPLAY=:0; /home/eddyizm-hp/Documents/insta_delete/upload.sh  >> /home/eddyizm-hp/HP/upload.log
 
 
 if os.name == 'nt':
     logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'
-    firefoxPath= r'C:\Users\eddyizm\Source\Repos\InstaPy\assets\geckodriver.exe'
+    firefoxPath= r'C:\Users\eddyizm\Source\Repos\seleniumTesting\env\geckodriver.exe'
     image_path = r'C:\Users\eddyizm\HP\images'
     desk_profile = r'C:\Users\eddyizm\AppData\Roaming\Mozilla\Firefox\Profiles\nljvmxt1.default'
 else:
@@ -52,8 +50,7 @@ def get_images(folder : str):
 
 
 def return_randomtime():
-    #return randrange(25,60)
-    return randrange(10,30)
+    return randrange(25,60)
 
 
 def login_to_site():
@@ -111,15 +108,17 @@ def upload_image(browser_object : str, filepath : str):
         ActionChains(browser_object).move_to_element(options_button).click().perform()
         time.sleep(return_randomtime())
         print('selecting file on local file system')
+        # browser_object.save_screenshot("selectingfile.png")
         pyautogui.write(filepath, interval=0.25)
         pyautogui.press('return')
         pyautogui.press('enter')
+        # browser_object.save_screenshot("lookingforOpenBTN.png")
         btn = pyautogui.locateOnScreen('screenshots/open.png')
         if btn:
             top = (btn[0] + (btn[2]/2))
             bottom = (btn[1] + (btn[3]/2))
             pyautogui.click(x=top, y=bottom)
-            print('file pushed to browser. now to resize and add the tags.')
+            print('file pushed to browser... add the tags.')
         time.sleep(30)
         return browser_object
     except Exception as ex:
@@ -188,5 +187,5 @@ def main():
             continue
 
 if __name__ == '__main__':
-    # time.sleep(randrange(1,3000))
+    time.sleep(randrange(1,3000))
     main()
