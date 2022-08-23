@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup, SoupStrainer
@@ -10,6 +10,7 @@ import time
 import os
 import sys
 import json
+import logging as log
 
 linux = False
 URLS = []
@@ -24,26 +25,29 @@ def get_keys():
 settings = get_keys()
 insta_username = settings['instagram']['login']
 insta_password = settings['instagram']['pass']
-
-if os.name == 'nt':
-    log_path = settings['windows']['log_path']
-    # log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
-    firefoxPath= settings['windows']['firefoxPath']
-else:
-    firefoxPath="env/geckodriver"
-    # logintext = "env/login.txt"
-    # log_path = 'env/media_urls.txt'
-    linux = True
+log_path = settings['windows']['log_path']
+app_log = settings['windows']['app_log']
+firefoxPath= settings['windows']['firefoxPath']
+    
+handlers = [log.FileHandler(app_log), log.StreamHandler()]
+log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
 
 
-def stime(seconds):
-    return time.sleep(seconds)
+def stime():
+    return time.sleep(5)
 
 
 def OpenLog():
     with open(log_path, 'r', encoding= 'utf-8') as g:
         lines = g.read().splitlines()
         return (lines)
+
+
+def dump_html_to_file(driver):
+    ''' used this to debug and find html changes. '''
+    checkhtml = BeautifulSoup(driver.page_source, "html.parser")
+    with open('debug.html', 'w', encoding='utf-8') as w:
+        w.write(checkhtml.prettify())
 
 
 def WriteToArchive(log, data):
@@ -66,40 +70,37 @@ def parse_href(data):
     return url_list            
 
 
-def profile_post_min(counter):
+def profile_post_min(counter, browser):
+    # TODO this function is currently not working and thus returning True regardless
+    result = False
     try:
-        browser = webdriver.Firefox(executable_path=firefoxPath)
-        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         browser.get("https://www.instagram.com/eddyizm")
-        print ('checking post count limit currently set at: '+str(counter))
+        log.info(f'checking post count limit currently set at: {counter}')
         post_count = ''
-        stime(10)
+        stime()
         links = BeautifulSoup(browser.page_source, "html.parser", parse_only=SoupStrainer('a'))
-        browser.close()
+        # dump_html_to_file(driver=browser)
         for x in links:
             t = x.get('href')
-            if 'profile_posts' in t:
+            if 'posts' in t:
                 post_count = x.text.replace(' posts','')
-                print (post_count)
-        if int(post_count.replace(',','')) > counter:
-            return True
-        else:
-            print ('count mininum reached.')
-            return False
-    except ValueError as err:
-        print ('profile_post_min :ERROR:')
-        print (err)
-        return False
+                log.info(f'post count: {post_count}')
 
-def scroll_to_end():
-    browser = webdriver.Firefox(executable_path=firefoxPath)
-    # if linux:
-    #     browser = webdriver.Firefox(executable_path=firefoxPath)
-    # else:
-    #     browser = webdriver.Firefox()        
+        if len(post_count) > 0 and int(post_count.replace(',','')) > counter:
+            result = True
+        else:
+            log.info('count mininum reached.')
+            result = False
+    except ValueError as err:
+        log.info('profile_post_min :ERROR:')
+        log.info(err)
+    finally:
+        return True
+
+
+def scroll_to_end(browser):
     get_html = None
-    print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    print ('scrolling profile to get more urls')
+    log.info('scrolling profile to get more urls')
     try:
         browser.get("https://www.instagram.com/eddyizm")
         #match = check_posts(browser.page_source, post_counter) 
@@ -117,55 +118,50 @@ def scroll_to_end():
                 
         get_html = browser.page_source                       
         browser.close()
-        print ('scrolled down: '+str(count)+' times!')
-        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        log.info('scrolled down: '+str(count)+' times!')
+        log.info(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     except Exception as err:
-        print (err)
+        log.info(err)
         browser.close()
     return get_html
 
 
 def login_to_site():
     try:
-        print ('logging in as mobile device to delete')
-        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        log.info('logging in as mobile device to delete')
         user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
         profile = webdriver.FirefoxProfile() 
         profile.set_preference("general.useragent.override", user_agent)
         browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
-        # if linux:
-        #     browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
-        # else:
-        #     browser = webdriver.Firefox(firefox_profile = profile)
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
-        stime(10)
-        # f = open (logintext, 'r')
-        # login = f.read().splitlines()
-        # f.close()
-        # insta_username = login[0]
-        # insta_password = login[1]
-        eUser = browser.find_elements_by_xpath(
-            "//input[@name='username']")
-        stime(10)
-        ActionChains(browser).move_to_element(eUser[0]). \
+        stime()
+        eUser = browser.find_element(by=By.XPATH, value="//input[@name='username']")
+        log.info(f'found username element: {eUser}')
+        stime()
+        ActionChains(browser).move_to_element(eUser). \
             click().send_keys(insta_username).perform()
-        stime(10)
-        ePass = browser.find_elements_by_xpath(
-            "//input[@name='password']")
-        stime(10)
-        ActionChains(browser).move_to_element(ePass[0]). \
+        stime()
+        ePass = browser.find_element(by=By.XPATH, value="//input[@name='password']")
+        stime()
+        ActionChains(browser).move_to_element(ePass). \
             click().send_keys(insta_password).perform()
 
-        stime(10)
-        login_button = browser.find_element_by_xpath(
-            "//*[contains(text(), 'Log In')]")
+        stime()
+        login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log In')]")
             #"//button[text()='Log In']")
             #"//form/span/button[text()='Log In']")
                      
         ActionChains(browser).move_to_element(login_button).click().perform()
-        stime(10)
-            
+        stime()
+        return browser
+    except Exception as err:
+        log.info(err)
+        browser.close()
+        sys.exit(1)
+
+
+def delete_posts(browser):
         links = OpenLog()
         new_file = []
         deleted_urls = []
@@ -174,78 +170,67 @@ def login_to_site():
             if l.startswith('https://www.instagram.com/p/'):
                 new_file.append(l)
         
-        print ('length of file: '+str(len(new_file)))
+        log.info('length of file: '+str(len(new_file)))
         if (counter >= len(new_file)):
             counter = (len(new_file) - 1)
         
-        print ('counter: '+str(counter))
+        log.info('number of posts to delete: '+str(counter))
         
         try:
-            print ('DELETING POSTS!')
-            print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            log.info('DELETING POSTS!')
             while (counter > -1):
+                log.info(f'getting new url: {new_file[counter]}')
                 browser.get(new_file[counter])
-                stime(10)
+                stime()
                 
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
-                    print ('URL not found, removing from list')
+                    log.info('URL not found, removing from list')
                     counter -= 1
                 else:                
-                    # used this to debug and find html changes.
-                    # checkhtml = BeautifulSoup(browser.page_source, "html.parser")
-                    # with open('debug.html', 'w', encoding='utf-8') as w:
-                    #     w.write(checkhtml.prettify())
-                    options_button = browser.find_element_by_xpath(
-                            "//div[@class='MEAGs']//*[@aria-label='More options']")
+                    options_button = browser.find_element(by=By.XPATH, value="//div[@class='_aasm']//*[@aria-label='More options']")
                     ActionChains(browser).move_to_element(options_button).click().perform()                
-                    stime(10)
-                    delete_button = browser.find_element_by_xpath(
-                        "//button[text()='Delete']")
+                    stime()
+                    delete_button = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
                     ActionChains(browser).move_to_element(delete_button).click().perform()
-                    stime(10)
-                    confirm_delete = browser.find_element_by_xpath(
-                        "//button[text()='Delete']")
+                    stime()
+                    confirm_delete = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
                     ActionChains(browser).move_to_element(confirm_delete).click().perform()
                     deleted_urls.append(new_file[counter])
-                    stime(10)
-                    print ('POST DELETED: '+new_file[counter])
+                    stime()
+                    log.info('POST DELETED: '+new_file[counter])
                     counter -= 1
 
             l3 = [x for x in new_file if x not in deleted_urls]
-            print ('while loop done and exited successfully')
-            print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            log.info('while loop done and exited successfully')
+            log.info(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             WriteToArchive(log_path, l3)	    
             browser.close()
 
         except Exception as err:
-            print (err)
+            log.info(err)
             browser.close()
-            sys.exit()
+            sys.exit(1)
     
-    except Exception as err:
-        print (err)        
-
 
 if __name__ == '__main__':
-    print ('----------------------------------------------------------------------------------------------------- ')
-    print ('--------------------------------------- new session ------------------------------------------------- ')
-    print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    print ('----------------------------------------------------------------------------------------------------- ')
+    log.info('----------------------------------------------------------------------------------------------------- ')
+    log.info('--------------------------------------- new session ------------------------------------------------- ')
+    log.info('----------------------------------------------------------------------------------------------------- ')
     file_size = os.stat(log_path).st_size
-    print ('file size: '+ str(file_size))
+    log.info('file size: '+ str(file_size))
+    agent = login_to_site()
     if (os.stat(log_path).st_size == 0):
-        print ('file empty, going to scroll')
-        source_data = scroll_to_end()
+        log.info('file empty, going to scroll')
+        source_data = scroll_to_end(browser=agent)
         URLS = parse_href(source_data)
         WriteToArchive(log_path, URLS)    
     # # manually load html file
     # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
-    if profile_post_min(post_counter):
-        login_to_site()
-    print ('----------------------------------------------------------------------------------------------------- ')
-    print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    print ('--------------------------------------- end session ------------------------------------------------- ')
-    print ('----------------------------------------------------------------------------------------------------- ')
+    # if profile_post_min(counter=post_counter, browser=agent):
+    delete_posts(browser=agent)
+    log.info('----------------------------------------------------------------------------------------------------- ')
+    log.info('--------------------------------------- end session ------------------------------------------------- ')
+    log.info('----------------------------------------------------------------------------------------------------- ')
 
-    sys.exit()
+    sys.exit(0)
