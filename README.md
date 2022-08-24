@@ -17,18 +17,14 @@ post_counter = 500
 
 ## Prerequisites
 
-Download ```chromedriver``` for your system [from here](https://sites.google.com/a/chromium.org/chromedriver/downloads). The script uses chromedriver after setting it in the path variables. Otherwise you can specify the specific location of the executable. 
+Download `geckodriver` for your system [here](https://github.com/mozilla/geckodriver/releases). The script uses geckodriver after setting it in the path variables. Otherwise you can specify the specific location of the executable. 
 
-If chromedriver is not specified in your environ, replace the code
+
 ```
-browser = webdriver.Chrome()
-```
-with 
-```
-browser = webdriver.Chrome('/path/to/chromedriver')  # Optional argument, if not specified will search path.
+browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
 ```
 
-See the getting started page for more help: http://chromedriver.chromium.org/getting-started
+For more help: https://github.com/mozilla/geckodriver
 
 
 ## Installation
@@ -37,76 +33,76 @@ See the getting started page for more help: http://chromedriver.chromium.org/get
 
 ## Usage
 
-I set up variables to store the URLS and account information. 
+I updated all the environment specific stuff to a json file and a function to read the file. All I need to pass in is the file location
 
-    log_path = 'C:/Users/eddyizm/Source/Repos/seleniumTesting/env/media_urls.txt'
-    logintext = "C:\\Users\\eddyizm\\Desktop\\Work\\login.txt"
+    CONFIG = r"/path/to/file/config.json"
+    logintext = "/path/to/file/login.txt"
 
-These will need to be replaced with local paths for your system. 
-The login.txt should be split into two lines:
+Config file format
 
-    USERNAME
-    PASSWORD
-
-Other wise you can comment out the file open portion and replace the ```login[0]``` values with your credentials:
-
-    #f = open (logintext, 'r')
-    #login = f.read().splitlines()
-    #f.close()
-    insta_username = USERNAME
-    insta_password = PASSWORD
+    {
+        "instagram": {
+            "login": "<YOUR_LOGIN",
+            "pass": "<YOUR_PASSWORD>"
+        },
+        "windows": {
+            "image_path": "/path/to/files/images",
+            "log_path" : "/path/to/files/media_urls.txt",
+            "app_log" : "/path/to/files/insta_delete.log",
+            "firefoxPath" : "/path/to/files/geckodriver.exe"
+        }
+    }
 
 ### Scheduled Task / Cron Tab
 On my windows machine I set up a scheduled task that fires off the script via a batch file set up to activate virtual environment and append output results to log file. Linux and Mac would be just as easy using crontab.
 
     REM ************************************************************
-    REM Batch file to run python script
+    REM Batch file to run python insta_delete script
     REM ************************************************************
 
     @echo off
-    cmd /k "cd /d C:\Users\eddyizm\Source\Repos\seleniumTesting\env\Scripts && activate && cd /d  C:\Users\eddyizm\Source\Repos\seleniumTesting && python insta_delete.py >> C:\Users\eddyizm\Source\Repos\seleniumTesting\env\log.txt"      
+    cmd /k "cd /d /path/to/files/insta_delete/env/Scripts && activate && cd /d  /path/to/files/insta_delete/ && python insta_delete.py     
 
 ### Log File Output
 Handy for debugging and keeping track of how long the scrolling takes and deleting progress. I tail this file to my dropbox or email to keep an eye on it.
 
-    ----------------------------------------------------------------------------------------------------- 
-    --------------------------------------- new session ------------------------------------------------- 
-    2018-08-07 11:00:18
-    ----------------------------------------------------------------------------------------------------- 
-    file size: 0
-    file empty, going to scroll
-    2018-08-07 11:00:22
-    scrolling profile to get more urls
-    scrolled down: 617 times!
-    2018-08-07 12:43:22
-    logging in as mobile device to delete
-    2018-08-07 12:43:28
-    length of file: 30
-    counter: 15
-    DELETING POSTS!
-    2018-08-07 12:43:59
-    POST DELETED: https://www.instagram.com/p/NJM0L/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NLNSX/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NOkLl/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NO2KG/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NPJCZ/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NPSq-/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NPS6H/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NUlgG/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NUnRd/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NX6FM/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NYC8u/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NZL_R/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NcgTf/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NcqAb/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NdS2T/?taken-by=eddyizm
-    POST DELETED: https://www.instagram.com/p/NdwvP/?taken-by=eddyizm
-    while loop done and exited successfully
-    2018-08-07 12:55:06
-    ----------------------------------------------------------------------------------------------------- 
-    2018-08-07 12:55:08
-    --------------------------------------- end session ------------------------------------------------- 
-    -----------------------------------------------------------------------------------------------------
+    2022-08-21 13:31:58,860 | INFO | ----------------------------------------------------------------------------------------------------- 
+    2022-08-21 13:31:58,861 | INFO | --------------------------------------- new session ------------------------------------------------- 
+    2022-08-21 13:31:58,862 | INFO | ----------------------------------------------------------------------------------------------------- 
+    2022-08-21 13:31:58,862 | INFO | file size: 3131
+    2022-08-21 13:31:58,862 | INFO | logging in as mobile device to delete
+    2022-08-21 13:32:15,469 | INFO | found username element: <selenium.webdriver.remote.webelement.WebElement (session="2bcb2e52-f7de-4343-a9b9-bc477e63bb9d", element="2eb1be44-2dd4-4533-bc80-3f7a7a727491")>
+    2022-08-21 13:32:41,432 | INFO | length of file: 45
+    2022-08-21 13:32:41,432 | INFO | counter: 10
+    2022-08-21 13:32:41,432 | INFO | DELETING POSTS!
+    2022-08-21 13:32:41,433 | INFO | getting new url: https://www.instagram.com/p/CZw-ODmpXjL/
+    2022-08-21 13:33:03,334 | INFO | POST DELETED: https://www.instagram.com/p/CZw-ODmpXjL/
+    2022-08-21 13:33:03,334 | INFO | getting new url: https://www.instagram.com/p/CZzQdEHFT00/
+    2022-08-21 13:33:25,290 | INFO | POST DELETED: https://www.instagram.com/p/CZzQdEHFT00/
+    2022-08-21 13:33:25,290 | INFO | getting new url: https://www.instagram.com/p/CZ10sjyFgMV/
+    2022-08-21 13:33:46,994 | INFO | POST DELETED: https://www.instagram.com/p/CZ10sjyFgMV/
+    2022-08-21 13:33:46,995 | INFO | getting new url: https://www.instagram.com/p/CZ4aUIVFSnN/
+    2022-08-21 13:34:08,289 | INFO | POST DELETED: https://www.instagram.com/p/CZ4aUIVFSnN/
+    2022-08-21 13:34:08,289 | INFO | getting new url: https://www.instagram.com/p/CZ6-z_FFile/
+    2022-08-21 13:34:29,830 | INFO | POST DELETED: https://www.instagram.com/p/CZ6-z_FFile/
+    2022-08-21 13:34:29,831 | INFO | getting new url: https://www.instagram.com/p/CZ9fNDclq1o/
+    2022-08-21 13:34:51,532 | INFO | POST DELETED: https://www.instagram.com/p/CZ9fNDclq1o/
+    2022-08-21 13:34:51,533 | INFO | getting new url: https://www.instagram.com/p/CaAIwjiFHx7/
+    2022-08-21 13:35:12,983 | INFO | POST DELETED: https://www.instagram.com/p/CaAIwjiFHx7/
+    2022-08-21 13:35:12,984 | INFO | getting new url: https://www.instagram.com/p/CaCs5lClleg/
+    2022-08-21 13:35:34,654 | INFO | POST DELETED: https://www.instagram.com/p/CaCs5lClleg/
+    2022-08-21 13:35:34,654 | INFO | getting new url: https://www.instagram.com/p/CaFSDqvlBOA/
+    2022-08-21 13:35:56,133 | INFO | POST DELETED: https://www.instagram.com/p/CaFSDqvlBOA/
+    2022-08-21 13:35:56,133 | INFO | getting new url: https://www.instagram.com/p/CaH16QZl89n/
+    2022-08-21 13:36:17,632 | INFO | POST DELETED: https://www.instagram.com/p/CaH16QZl89n/
+    2022-08-21 13:36:17,632 | INFO | getting new url: https://www.instagram.com/p/CaM788KFQag/
+    2022-08-21 13:36:39,084 | INFO | POST DELETED: https://www.instagram.com/p/CaM788KFQag/
+    2022-08-21 13:36:39,085 | INFO | while loop done and exited successfully
+    2022-08-21 13:36:39,086 | INFO | 2022-08-21 13:36:39
+    2022-08-21 13:36:40,473 | INFO | ----------------------------------------------------------------------------------------------------- 
+    2022-08-21 13:36:40,474 | INFO | --------------------------------------- end session ------------------------------------------------- 
+    2022-08-21 13:36:40,474 | INFO | ----------------------------------------------------------------------------------------------------- 
+
 
 ## TODO
 I'll be adding a few options to fine tune and make it a little more reliable.
