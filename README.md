@@ -1,8 +1,10 @@
 # insta_delete / insta_upload
 
 * please see below for [insta_upload](#upload) details
-
+  
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L3L01HI5A)
+
+ Short demo on [youtube](https://youtu.be/3YaTVtTsMgY).
 
 Selenium, BS4 powered script to delete old instagram posts.
 
