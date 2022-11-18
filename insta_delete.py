@@ -132,13 +132,10 @@ def login_to_site():
     try:
         log.info('logging in as mobile device to delete')
         user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
-        # profile = webdriver.FirefoxProfile() 
-        # profile.set_preference("general.useragent.override", user_agent)
         options=Options()
         options.set_preference('profile', profile_path)
         service = Service(firefoxPath)
         browser = webdriver.Firefox(service=service, options=options)
-        # browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         stime()
@@ -154,7 +151,8 @@ def login_to_site():
             click().send_keys(insta_password).perform()
 
         stime()
-        login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log In')]")
+        dump_html_to_file(browser)
+        login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
             #"//button[text()='Log In']")
             #"//form/span/button[text()='Log In']")
                      
