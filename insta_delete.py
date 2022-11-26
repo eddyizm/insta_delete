@@ -2,8 +2,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 from bs4 import BeautifulSoup, SoupStrainer
 from datetime import datetime
 import time
@@ -28,6 +29,7 @@ insta_password = settings['instagram']['pass']
 log_path = settings['windows']['log_path']
 app_log = settings['windows']['app_log']
 firefoxPath= settings['windows']['firefoxPath']
+profile_path = settings['windows']['profile_path']
     
 handlers = [log.FileHandler(app_log), log.StreamHandler()]
 log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
@@ -130,9 +132,13 @@ def login_to_site():
     try:
         log.info('logging in as mobile device to delete')
         user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
-        profile = webdriver.FirefoxProfile() 
-        profile.set_preference("general.useragent.override", user_agent)
-        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
+        # profile = webdriver.FirefoxProfile() 
+        # profile.set_preference("general.useragent.override", user_agent)
+        options=Options()
+        options.set_preference('profile', profile_path)
+        service = Service(firefoxPath)
+        browser = webdriver.Firefox(service=service, options=options)
+        # browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
         stime()
