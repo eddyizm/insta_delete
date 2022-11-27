@@ -7,3 +7,4 @@ venv/
 !.vscode/extensions.json
 **.log
 env/
+debug.html
