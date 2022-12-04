@@ -151,7 +151,6 @@ def login_to_site():
             click().send_keys(insta_password).perform()
 
         stime()
-        dump_html_to_file(browser)
         login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
             #"//button[text()='Log In']")
             #"//form/span/button[text()='Log In']")
@@ -184,9 +183,9 @@ def delete_posts(browser):
             log.info('DELETING POSTS!')
             while (counter > -1):
                 log.info(f'getting new url: {new_file[counter]}')
+                
                 browser.get(new_file[counter])
                 stime()
-                
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
                     log.info('URL not found, removing from list')
