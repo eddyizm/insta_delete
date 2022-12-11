@@ -10,7 +10,7 @@ import time
 import os
 from random import randrange, shuffle
 import pyautogui
-from insta_delete import get_keys
+from insta_delete import get_keys, login_to_site
 # import twitter bot to upload image there as well
 import sys
 sys.path.append(r'C:\Users\eddyizm\Source\repo\twitterbot/')
@@ -57,52 +57,6 @@ def get_images(folder : str):
 
 def return_randomtime():
     return randrange(25,60)
-
-
-def login_to_site():
-    try:
-        print ('logging in as mobile device')
-        print (datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
-        profile = webdriver.FirefoxProfile(desk_profile)
-        profile.set_preference("general.useragent.override", user_agent)
-        time.sleep(return_randomtime())
-        browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath, service_log_path='env/geckodriver.log')
-        browser.set_window_size(360,640)
-        browser.get("https://www.instagram.com/accounts/login/")
-        time.sleep(return_randomtime())
-        f = open (logintext, 'r')
-        login = f.read().splitlines()
-        f.close()
-        insta_username = login[0]
-        insta_password = login[1]
-        eUser = browser.find_elements_by_xpath(
-            "//input[@name='username']")
-        time.sleep(return_randomtime())
-        ActionChains(browser).move_to_element(eUser[0]). \
-            click().send_keys(insta_username).perform()
-        time.sleep(return_randomtime())
-        ePass = browser.find_elements_by_xpath(
-            "//input[@name='password']")
-        time.sleep(return_randomtime())
-        ActionChains(browser).move_to_element(ePass[0]). \
-            click().send_keys(insta_password).perform()
-
-        time.sleep(return_randomtime())
-        login_button = browser.find_element_by_xpath(
-            "//*[contains(text(), 'Log In')]")
-
-        ActionChains(browser).move_to_element(login_button).click().perform()
-        time.sleep(return_randomtime())
-        # skip over save login credentials screen
-        print('login successful, return browser to homepage')
-        browser.get("https://www.instagram.com/")
-        time.sleep(return_randomtime())
-        return browser
-    except Exception as err:
-        print('error in LoginToSite')
-        print (err)
-        browser.quit()
 
 
 def upload_image(browser_object : str, filepath : str):
