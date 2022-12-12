@@ -15,6 +15,7 @@ from insta_delete import get_keys
 def main():
     settings = get_keys()
     driver = login_to_site()
+    cookies = driver.get_cookies()
 
 
 if __name__ == "__main__":
