@@ -10,6 +10,7 @@ import time
 import os
 from random import randrange, shuffle
 import pyautogui
+from insta_delete import get_keys
 # import twitter bot to upload image there as well
 import sys
 sys.path.append(r'C:\Users\eddyizm\Source\repo\twitterbot/')
@@ -18,10 +19,15 @@ pyautogui.FAILSAFE = False
 
 
 if os.name == 'nt':
-    logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'
-    firefoxPath= r'C:\Users\eddyizm\Source\Repos\seleniumTesting\env\geckodriver.exe'
-    image_path = r'C:\Users\eddyizm\HP\images'
-    desk_profile = r'C:\Users\eddyizm\AppData\Roaming\Mozilla\Firefox\Profiles\nljvmxt1.default'
+    settings = get_keys()
+    logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'  # TODO replace logintext with login/pass
+    insta_username = settings['instagram']['login']
+    insta_password = settings['instagram']['pass']
+    log_path = settings['windows']['log_path']
+    app_log = settings['windows']['app_log']
+    firefoxPath= settings['windows']['firefoxPath']
+    desk_profile = settings['windows']['profile_path']
+    image_path = settings['windows']['image_path']
 else:
     firefoxPath="env/geckodriver"
     logintext = "env/login.txt"
