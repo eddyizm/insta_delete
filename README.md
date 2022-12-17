@@ -38,7 +38,7 @@ For more help: https://github.com/mozilla/geckodriver
 I updated all the environment specific stuff to a json file and a function to read the file. All I need to pass in is the file location
 
     CONFIG = r"/path/to/file/config.json"
-    logintext = "/path/to/file/login.txt"
+
 
 Config file format
 
