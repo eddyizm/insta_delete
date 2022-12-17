@@ -1,43 +1,22 @@
 # -*- coding: UTF-8 -*-
 ''' writing a script to automate photo uploads '''
+from glob import glob
+import os
+import logging
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.file_detector import UselessFileDetector
-from bs4 import BeautifulSoup
-from datetime import datetime
-from glob import glob
-import time
-import os
+
 from random import randrange, shuffle
 import pyautogui
-from insta_delete import login_to_site
+
 import insta_base
-# import twitter bot to upload image there as well
-# import sys
-# sys.path.append(r'C:\Users\eddyizm\Source\repo\twitterbot/')
-# from post_image import tweet_photos, tweepy_creds, search_twtr, fave_tweet
-import logging
+
 log = logging.getLogger(__name__)
-
 pyautogui.FAILSAFE = False
-
-#Settings = insta_base.get_settings()
-
-if os.name == 'nt':
-    pass
-    # settings = get_keys()
-    # logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'  # TODO replace logintext with login/pass
-    
-    # app_log = settings['windows']['app_log']
-    # firefox_path= settings['windows']['firefox_path']
-    # desk_profile = settings['windows']['profile_path']
-    # image_path = settings['windows']['image_path']
-else:
-    firefox_path="env/geckodriver"
-    logintext = "env/login.txt"
-    image_path = "/home/eddyizm-hp/HP/images"
-    desk_profile = r'/home/eddyizm-hp/.mozilla/firefox/69f6brir.default'
 
 
 def get_images(folder : str):
@@ -57,11 +36,17 @@ def return_randomtime():
     return randrange(25,60)
 
 
-def upload_image(browser_object : str, filepath : str):
+
+
+
+def upload_image(browser_object : webdriver, filepath : str):
     try:
         print('finding upload image button')
         insta_base.dump_html_to_file(browser_object)
         browser_object.file_detector = UselessFileDetector()
+        if insta_base.check_for_text('Save Your Login Info', browser_object) and insta_base.check_for_text('Turn on Notifications', browser_object):
+            browser_object.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")
+        insta_base.stime()
         options_button = browser_object.find_element(by=By.XPATH, 
                             value="//div[@class='q02Nz _0TPg']//*[@aria-label='New Post']")
         ActionChains(browser_object).move_to_element(options_button).click().perform()
@@ -85,7 +70,7 @@ def upload_image(browser_object : str, filepath : str):
         print('error in upload_image():', ex)
 
 
-def process_image(browser_object : str, tags : str):
+def process_image(browser_object : webdriver, tags : str):
     try:
         time.sleep(60)
         btn = pyautogui.locateOnScreen('screenshots/next.png')
@@ -120,7 +105,7 @@ def main():
     attempts = 3
     while attempts > 0:
         attempts = attempts -1
-        driver = login_to_site()
+        driver = insta_base.login_to_site()
         if not driver:
             print('attempt failed. trying again')
             time.sleep(return_randomtime())
@@ -133,12 +118,8 @@ def main():
             continue
         combined_tags = f'#{tag} #eddyizm | https://eddyizm.com'
         if process_image(next_driver, combined_tags):
-            # print(f'file posted successfully,\nnow going to post to twitterbot: {file}')
-            # twitter_api = tweepy_creds()
-            # tweet_photos(twitter_api, file, tag)
-            # search_results = search_twtr(twitter_api, tag)
-            # fave_tweet(twitter_api, search_results)
-            # os.remove(file)
+            log.info(f'file posted successfully: {file}')
+            os.remove(file)
             break
         else:
             print(f'error posting file.')
