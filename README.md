@@ -11,7 +11,7 @@ Selenium, BS4 powered script to delete old instagram posts.
 Working with selenium can be challenging if you have no previous experience with it. Part of this project was for me to get more comfortable using selenium on an ever changing UI. 
 
 ## Updates  
-Added a hard limit on profile posts to make sure it doesn't exceed a preferred minunum. Adjust the variable to make sure that quantity stays.   
+Added a hard limit on profile posts to make sure it doesn't exceed a preferred mininum. Adjust the variable to make sure that quantity stays.   
 ```
 post_counter = 500
 ```
@@ -23,7 +23,7 @@ Download `geckodriver` for your system [here](https://github.com/mozilla/geckodr
 
 
 ```
-browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefoxPath)
+browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefox_path)
 ```
 
 For more help: https://github.com/mozilla/geckodriver
@@ -51,7 +51,8 @@ Config file format
             "image_path": "/path/to/files/images",
             "log_path" : "/path/to/files/media_urls.txt",
             "app_log" : "/path/to/files/insta_delete.log",
-            "firefoxPath" : "/path/to/files/geckodriver.exe"
+            "firefox_path" : "/path/to/files/geckodriver.exe"
+            "profile_path" : "/path/to/AppData/Roaming/Mozilla/Firefox/Profiles/<profile>.default-release"
         }
     }
 
