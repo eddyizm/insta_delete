@@ -10,28 +10,15 @@ from datetime import datetime
 import time
 import os
 import sys
-import json
 import logging as log
+
+import insta_base
 
 linux = False
 URLS = []
 post_counter = 50
-CONFIG = r"C:\Users\eddyizm\HP\config.json"
 
-def get_keys():
-    with open(CONFIG, 'r') as myfile:
-        keys = myfile.read()
-        return json.loads(keys)
-
-settings = get_keys()
-insta_username = settings['instagram']['login']
-insta_password = settings['instagram']['pass']
-log_path = settings['windows']['log_path']
-app_log = settings['windows']['app_log']
-firefoxPath= settings['windows']['firefoxPath']
-profile_path = settings['windows']['profile_path']
-    
-handlers = [log.FileHandler(app_log), log.StreamHandler()]
+handlers = [log.FileHandler(insta_base.Settings.app_log), log.StreamHandler()]
 log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
 
 
@@ -40,16 +27,9 @@ def stime():
 
 
 def OpenLog():
-    with open(log_path, 'r', encoding= 'utf-8') as g:
+    with open(insta_base.Settings.log_path, 'r', encoding= 'utf-8') as g:
         lines = g.read().splitlines()
         return (lines)
-
-
-def dump_html_to_file(driver):
-    ''' used this to debug and find html changes. '''
-    checkhtml = BeautifulSoup(driver.page_source, "html.parser")
-    with open('debug.html', 'w', encoding='utf-8') as w:
-        w.write(checkhtml.prettify())
 
 
 def WriteToArchive(log, data):
@@ -133,8 +113,8 @@ def login_to_site():
         log.info('logging in as mobile device to delete')
         user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
         options=Options()
-        options.set_preference('profile', profile_path)
-        service = Service(firefoxPath)
+        options.set_preference('profile', insta_base.Settings.profile_path)
+        service = Service(insta_base.Settings.firefox_path)
         browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(360,640)
         browser.get("https://www.instagram.com/accounts/login/")
@@ -143,24 +123,26 @@ def login_to_site():
         log.info(f'found username element: {eUser}')
         stime()
         ActionChains(browser).move_to_element(eUser). \
-            click().send_keys(insta_username).perform()
+            click().send_keys(insta_base.Settings.insta_username).perform()
         stime()
         ePass = browser.find_element(by=By.XPATH, value="//input[@name='password']")
+        log.info(f'found password element: {ePass}')
         stime()
         ActionChains(browser).move_to_element(ePass). \
-            click().send_keys(insta_password).perform()
+            click().send_keys(insta_base.Settings.insta_password).perform()
 
         stime()
         login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
             #"//button[text()='Log In']")
             #"//form/span/button[text()='Log In']")
-                     
+        log.info(f'found login element: {login_button}')
         ActionChains(browser).move_to_element(login_button).click().perform()
         stime()
+        log.info('login successful...')
         return browser
     except Exception as err:
         log.info(err)
-        browser.close()
+        # browser.close()
         sys.exit(1)
 
 
@@ -206,8 +188,7 @@ def delete_posts(browser):
 
             l3 = [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
-            log.info(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            WriteToArchive(log_path, l3)	    
+            WriteToArchive(insta_base.Settings.log_path, l3)	    
             browser.close()
 
         except Exception as err:
@@ -220,14 +201,14 @@ if __name__ == '__main__':
     log.info('----------------------------------------------------------------------------------------------------- ')
     log.info('--------------------------------------- new session ------------------------------------------------- ')
     log.info('----------------------------------------------------------------------------------------------------- ')
-    file_size = os.stat(log_path).st_size
+    file_size = os.stat(insta_base.Settings.log_path).st_size
     log.info('file size: '+ str(file_size))
     agent = login_to_site()
-    if (os.stat(log_path).st_size == 0):
+    if (os.stat(insta_base.Settings.log_path).st_size == 0):
         log.info('file empty, going to scroll')
         source_data = scroll_to_end(browser=agent)
         URLS = parse_href(source_data)
-        WriteToArchive(log_path, URLS)    
+        WriteToArchive(insta_base.Settings.log_path, URLS)    
     # # manually load html file
     # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
     # if profile_post_min(counter=post_counter, browser=agent):
