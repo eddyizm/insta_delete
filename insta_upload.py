@@ -2,6 +2,7 @@
 ''' writing a script to automate photo uploads '''
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.file_detector import UselessFileDetector
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -10,36 +11,33 @@ import time
 import os
 from random import randrange, shuffle
 import pyautogui
-from insta_delete import get_keys, login_to_site
+from insta_delete import login_to_site
+import insta_base
 # import twitter bot to upload image there as well
-import sys
-sys.path.append(r'C:\Users\eddyizm\Source\repo\twitterbot/')
-from post_image import tweet_photos, tweepy_creds, search_twtr, fave_tweet
+# import sys
+# sys.path.append(r'C:\Users\eddyizm\Source\repo\twitterbot/')
+# from post_image import tweet_photos, tweepy_creds, search_twtr, fave_tweet
+import logging
+log = logging.getLogger(__name__)
+
 pyautogui.FAILSAFE = False
 
+#Settings = insta_base.get_settings()
 
 if os.name == 'nt':
-    settings = get_keys()
-    logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'  # TODO replace logintext with login/pass
-    insta_username = settings['instagram']['login']
-    insta_password = settings['instagram']['pass']
-    log_path = settings['windows']['log_path']
-    app_log = settings['windows']['app_log']
-    firefoxPath= settings['windows']['firefoxPath']
-    desk_profile = settings['windows']['profile_path']
-    image_path = settings['windows']['image_path']
+    pass
+    # settings = get_keys()
+    # logintext = r'C:\Users\eddyizm\Desktop\Work\login.txt'  # TODO replace logintext with login/pass
+    
+    # app_log = settings['windows']['app_log']
+    # firefox_path= settings['windows']['firefox_path']
+    # desk_profile = settings['windows']['profile_path']
+    # image_path = settings['windows']['image_path']
 else:
-    firefoxPath="env/geckodriver"
+    firefox_path="env/geckodriver"
     logintext = "env/login.txt"
     image_path = "/home/eddyizm-hp/HP/images"
     desk_profile = r'/home/eddyizm-hp/.mozilla/firefox/69f6brir.default'
-
-
-def dump_html(selenium_driver : str):
-    ''' function to out html for inspection when luck is not on  my side '''
-    checkhtml = BeautifulSoup(selenium_driver.page_source, "html.parser")
-    with open('debug.html', 'w', encoding='utf-8') as w:
-        w.write(checkhtml.prettify())
 
 
 def get_images(folder : str):
@@ -62,9 +60,10 @@ def return_randomtime():
 def upload_image(browser_object : str, filepath : str):
     try:
         print('finding upload image button')
+        insta_base.dump_html_to_file(browser_object)
         browser_object.file_detector = UselessFileDetector()
-        options_button = browser_object.find_element_by_xpath(
-                            "//div[@class='q02Nz _0TPg']//*[@aria-label='New Post']")
+        options_button = browser_object.find_element(by=By.XPATH, 
+                            value="//div[@class='q02Nz _0TPg']//*[@aria-label='New Post']")
         ActionChains(browser_object).move_to_element(options_button).click().perform()
         time.sleep(return_randomtime())
         print('selecting file on local file system')
@@ -88,7 +87,6 @@ def upload_image(browser_object : str, filepath : str):
 
 def process_image(browser_object : str, tags : str):
     try:
-        # dump_html(browser_object)
         time.sleep(60)
         btn = pyautogui.locateOnScreen('screenshots/next.png')
         if btn:
@@ -97,14 +95,12 @@ def process_image(browser_object : str, tags : str):
             pyautogui.click(x=top, y=bottom)
             print('found next button, moving to caption screen')
         time.sleep(return_randomtime())
-        add_text = browser_object.find_element_by_xpath(
-                        "//textarea[@aria-label='Write a caption…']")
+        add_text = browser_object.find_element(by=By.XPATH, value="//textarea[@aria-label='Write a caption…']")
         time.sleep(return_randomtime())
         print('writing caption')
         ActionChains(browser_object).move_to_element(add_text).click().send_keys(tags).perform()
         time.sleep(return_randomtime())
-        share_button = browser_object.find_element_by_xpath(
-                        "//button[text()='Share']")
+        share_button = browser_object.find_element(by=By.XPATH, value="//button[text()='Share']")
         time.sleep(return_randomtime())
         ActionChains(browser_object).move_to_element(share_button).click().perform()
         time.sleep(return_randomtime())
@@ -118,6 +114,9 @@ def process_image(browser_object : str, tags : str):
 
 
 def main():
+    log.info('----------------------------------------------------------------------------------------------------- ')
+    log.info('--------------------------------------- new insta_upload session ------------------------------------- ')
+    log.info('------------------------------------------------------------------------------------------------------ ')
     attempts = 3
     while attempts > 0:
         attempts = attempts -1
@@ -126,7 +125,7 @@ def main():
             print('attempt failed. trying again')
             time.sleep(return_randomtime())
             continue
-        file, tag = get_images(image_path)
+        file, tag = get_images(insta_base.Settings.image_path)
         next_driver = upload_image(driver, file)
         if not next_driver:
             print('attempt failed. trying again')
@@ -134,11 +133,11 @@ def main():
             continue
         combined_tags = f'#{tag} #eddyizm | https://eddyizm.com'
         if process_image(next_driver, combined_tags):
-            print(f'file posted successfully,\nnow going to post to twitterbot: {file}')
-            twitter_api = tweepy_creds()
-            tweet_photos(twitter_api, file, tag)
-            search_results = search_twtr(twitter_api, tag)
-            fave_tweet(twitter_api, search_results)
+            # print(f'file posted successfully,\nnow going to post to twitterbot: {file}')
+            # twitter_api = tweepy_creds()
+            # tweet_photos(twitter_api, file, tag)
+            # search_results = search_twtr(twitter_api, tag)
+            # fave_tweet(twitter_api, search_results)
             # os.remove(file)
             break
         else:
@@ -147,5 +146,5 @@ def main():
             continue
 
 if __name__ == '__main__':
-    time.sleep(randrange(1,3000))
+    # time.sleep(randrange(1,3000))
     main()
