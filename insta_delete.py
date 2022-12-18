@@ -1,30 +1,20 @@
 # -*- coding: UTF-8 -*-
-from selenium import webdriver
+# from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
 from bs4 import BeautifulSoup, SoupStrainer
 from datetime import datetime
 import time
 import os
 import sys
-import logging as log
+import logging
 
 import insta_base
 
 linux = False
 URLS = []
 post_counter = 50
-
-handlers = [log.FileHandler(insta_base.Settings.app_log), log.StreamHandler()]
-log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
-
-
-def stime():
-    return time.sleep(5)
-
+log = logging.getLogger(__name__)
 
 def OpenLog():
     with open(insta_base.Settings.log_path, 'r', encoding= 'utf-8') as g:
@@ -56,12 +46,11 @@ def profile_post_min(counter, browser):
     # TODO this function is currently not working and thus returning True regardless
     result = False
     try:
-        browser.get("https://www.instagram.com/eddyizm")
+        browser.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")
         log.info(f'checking post count limit currently set at: {counter}')
         post_count = ''
-        stime()
+        insta_base.stime()
         links = BeautifulSoup(browser.page_source, "html.parser", parse_only=SoupStrainer('a'))
-        # dump_html_to_file(driver=browser)
         for x in links:
             t = x.get('href')
             if 'posts' in t:
@@ -84,7 +73,7 @@ def scroll_to_end(browser):
     get_html = None
     log.info('scrolling profile to get more urls')
     try:
-        browser.get("https://www.instagram.com/eddyizm")
+        browser.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")
         #match = check_posts(browser.page_source, post_counter) 
         match = False
         lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
@@ -108,44 +97,6 @@ def scroll_to_end(browser):
     return get_html
 
 
-def login_to_site():
-    try:
-        log.info('logging in as mobile device to delete')
-        user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
-        options=Options()
-        options.set_preference('profile', insta_base.Settings.profile_path)
-        service = Service(insta_base.Settings.firefox_path)
-        browser = webdriver.Firefox(service=service, options=options)
-        browser.set_window_size(360,640)
-        browser.get("https://www.instagram.com/accounts/login/")
-        stime()
-        eUser = browser.find_element(by=By.XPATH, value="//input[@name='username']")
-        log.info(f'found username element: {eUser}')
-        stime()
-        ActionChains(browser).move_to_element(eUser). \
-            click().send_keys(insta_base.Settings.insta_username).perform()
-        stime()
-        ePass = browser.find_element(by=By.XPATH, value="//input[@name='password']")
-        log.info(f'found password element: {ePass}')
-        stime()
-        ActionChains(browser).move_to_element(ePass). \
-            click().send_keys(insta_base.Settings.insta_password).perform()
-
-        stime()
-        login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
-            #"//button[text()='Log In']")
-            #"//form/span/button[text()='Log In']")
-        log.info(f'found login element: {login_button}')
-        ActionChains(browser).move_to_element(login_button).click().perform()
-        stime()
-        log.info('login successful...')
-        return browser
-    except Exception as err:
-        log.info(err)
-        # browser.close()
-        sys.exit(1)
-
-
 def delete_posts(browser):
         links = OpenLog()
         new_file = []
@@ -167,7 +118,7 @@ def delete_posts(browser):
                 log.info(f'getting new url: {new_file[counter]}')
                 
                 browser.get(new_file[counter])
-                stime()
+                insta_base.stime()
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
                     log.info('URL not found, removing from list')
@@ -175,14 +126,14 @@ def delete_posts(browser):
                 else:                
                     options_button = browser.find_element(by=By.XPATH, value="//div[@class='_aasm']//*[@aria-label='More options']")
                     ActionChains(browser).move_to_element(options_button).click().perform()                
-                    stime()
+                    insta_base.stime()
                     delete_button = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
                     ActionChains(browser).move_to_element(delete_button).click().perform()
-                    stime()
+                    insta_base.stime()
                     confirm_delete = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
                     ActionChains(browser).move_to_element(confirm_delete).click().perform()
                     deleted_urls.append(new_file[counter])
-                    stime()
+                    insta_base.stime()
                     log.info('POST DELETED: '+new_file[counter])
                     counter -= 1
 
@@ -203,7 +154,7 @@ if __name__ == '__main__':
     log.info('----------------------------------------------------------------------------------------------------- ')
     file_size = os.stat(insta_base.Settings.log_path).st_size
     log.info('file size: '+ str(file_size))
-    agent = login_to_site()
+    agent = insta_base.login_to_site()
     if (os.stat(insta_base.Settings.log_path).st_size == 0):
         log.info('file empty, going to scroll')
         source_data = scroll_to_end(browser=agent)
