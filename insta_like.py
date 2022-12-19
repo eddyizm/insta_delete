@@ -16,8 +16,8 @@ import insta_base as ib
 log = logging.getLogger(__name__)
 
 def main():
-    result = ib.get_working_directory(__file__)
-    log.info(f'file directory: {result}')
-    
+    log.info(f'file directory: {ib.BASE_DIR}')
+
+
 if __name__ == "__main__":
     main()

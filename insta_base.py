@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import json
 import logging as log
+import os
 import sys
 import time
 
@@ -14,6 +15,10 @@ from selenium.webdriver.firefox.service import Service
 from models import Settings
 
 CONFIG = r"C:\Users\eddyizm\HP\config.json"
+
+
+def get_working_directory(_file):
+    return os.path.dirname(_file)
 
 
 def dump_html_to_file(driver):
@@ -63,7 +68,7 @@ def login_to_site():
         options.set_preference('profile', Settings.profile_path)
         service = Service(Settings.firefox_path)
         browser = webdriver.Firefox(service=service, options=options)
-        browser.set_window_size(360,640)
+        browser.set_window_size(1200,927)
         browser.get("https://www.instagram.com/accounts/login/")
         stime()
         eUser = browser.find_element(by=By.XPATH, value="//input[@name='username']")
@@ -92,7 +97,8 @@ def login_to_site():
         # browser.close()
         sys.exit(1)
 
-
+# call settings/functions to use in app
 Settings = get_settings()
 handlers = [log.FileHandler(Settings.app_log), log.StreamHandler()]
 log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
+BASE_DIR = get_working_directory(__file__)
