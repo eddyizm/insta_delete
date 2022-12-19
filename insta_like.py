@@ -5,18 +5,19 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.file_detector import UselessFileDetector
 from bs4 import BeautifulSoup
 from datetime import datetime
+
 import os
+import logging
 import pyautogui
 import pickle
-from insta_upload import  login_to_site, return_randomtime
-from insta_delete import get_keys
 
+import insta_base as ib
+
+log = logging.getLogger(__name__)
 
 def main():
-    settings = get_keys()
-    driver = login_to_site()
-    cookies = driver.get_cookies()
-
-
+    result = ib.get_working_directory(__file__)
+    log.info(f'file directory: {result}')
+    
 if __name__ == "__main__":
     main()
