@@ -114,3 +114,7 @@ I'll be adding a few options to fine tune and make it a little more reliable.
 
 <a name="upload"></a>
 # insta_upload
+
+Status: Not working
+
+join me on discord (eddyizm#3389) to fix it!
