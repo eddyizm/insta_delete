@@ -10,7 +10,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.file_detector import UselessFileDetector
 
-from random import randrange, shuffle
+from random import shuffle
 import pyautogui
 
 import insta_base
@@ -22,7 +22,7 @@ pyautogui.FAILSAFE = False
 def get_images(folder : str):
     ''' get a list of image from a folder recursively and randomize before returning one for posting '''
     folders = glob(folder+'/**/*.jpg', recursive=True)
-    shuffle(folders) 
+    shuffle(folders)
     fullpath = ''
     for filename in folders:
         if os.path.isfile(filename):
@@ -32,40 +32,40 @@ def get_images(folder : str):
     return fullpath, foldertag
 
 
-def return_randomtime():
-    return randrange(25,60)
-
-
 def upload_image(browser_object : webdriver, filepath : str):
     try:
         log.info('finding upload image button')
         browser_object.file_detector = UselessFileDetector()
-        insta_base.dump_html_to_file(browser_object)
         # if insta_base.check_for_text('Save Your Login Info', browser_object) and insta_base.check_for_text('Turn on Notifications', browser_object):
-        browser_object.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")    
+        browser_object.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")
         insta_base.stime()
-        new_post_option = browser_object.find_element(by=By.XPATH, 
+        new_post_option = browser_object.find_element(by=By.XPATH,
                             value="//*[local-name()='svg' and @aria-label='New post']")
         log.info('found new post option')
         ActionChains(browser_object).move_to_element(new_post_option).click().perform()
-        time.sleep(return_randomtime())
-        upload_button = browser_object.find_element(by=By.XPATH, 
+        insta_base.stime(True)
+        upload_button = browser_object.find_element(by=By.XPATH,
                             value="//button[text()='Select from computer']")
         log.info('found upload button')
         ActionChains(browser_object).move_to_element(upload_button).click().perform()
         log.info('selecting file on local file system')
-        # browser_object.save_screenshot("selectingfile.png")
+        browser_object.save_screenshot(os.path.join(insta_base.BASE_DIR,'selectingfile.png'))
         pyautogui.write(filepath, interval=0.25)
         pyautogui.press('return')
         pyautogui.press('enter')
-        # browser_object.save_screenshot("lookingforOpenBTN.png")
-        btn = pyautogui.locateOnScreen('screenshots/open.png')
-        if btn:
-            top = (btn[0] + (btn[2]/2))
-            bottom = (btn[1] + (btn[3]/2))
-            pyautogui.click(x=top, y=bottom)
-            log.info('file pushed to browser... add the tags.')
-        time.sleep(30)
+        # browser_object.save_screenshot(os.path.join(insta_base.BASE_DIR, 'lookingforOpenBTN.png'))
+        # open_png = os.path.join(insta_base.BASE_DIR, 'screenshots/open.png')
+        # btn = pyautogui.locateOnScreen(open_png)
+        # time.sleep(30)
+        # if btn:
+        #     top = (btn[0] + (btn[2]/2))
+        #     bottom = (btn[1] + (btn[3]/2))
+        #     pyautogui.click(x=top, y=bottom)
+        #     log.info('file pushed to browser... add the tags.')
+        # else:
+        #     log.info('open button not found')
+        #     return None
+        log.info('file pushed to browser...returning browser object')
         return browser_object
     except Exception as ex:
         browser_object.quit()
@@ -74,24 +74,40 @@ def upload_image(browser_object : webdriver, filepath : str):
 
 def process_image(browser_object : webdriver, tags : str):
     try:
-        time.sleep(60)
-        btn = pyautogui.locateOnScreen('screenshots/next.png')
+        log.info('starting process_image')
+        insta_base.stime(True)
+        # next_png = os.path.join(insta_base.BASE_DIR, 'screenshots/next.png')
+        # btn = pyautogui.locateOnScreen(next_png)
+        btn = browser_object.find_element(by=By.XPATH,
+                            value="//button[.='Next']")
         if btn:
-            top = (btn[0] + (btn[2]/2))
-            bottom = (btn[1] + (btn[3]/2))
-            pyautogui.click(x=top, y=bottom)
+            # top = (btn[0] + (btn[2]/2))
+            # bottom = (btn[1] + (btn[3]/2))
+            log.info('found next button')
+            ActionChains(browser_object).move_to_element(btn).click().perform()
+        else:
+            log.warn('Next button not found...fail!')
+            return False
+        btn = browser_object.find_element(by=By.XPATH,
+                            value="//button[.='Next']")
+        insta_base.stime(True)
+        if btn:
+            ActionChains(browser_object).move_to_element(btn).click().perform()
             log.info('found next button, moving to caption screen')
-        time.sleep(return_randomtime())
-        add_text = browser_object.find_element(by=By.XPATH, value="//textarea[@aria-label='Write a caption…']")
-        time.sleep(return_randomtime())
+        else:
+            log.warn('Next button not found...fail!')
+            return False            
+        insta_base.stime(True)
+        add_text = browser_object.find_element(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption…']")
+        insta_base.stime(True)
         log.info('writing caption')
         ActionChains(browser_object).move_to_element(add_text).click().send_keys(tags).perform()
-        time.sleep(return_randomtime())
-        share_button = browser_object.find_element(by=By.XPATH, value="//button[text()='Share']")
-        time.sleep(return_randomtime())
+        insta_base.stime(True)
+        share_button = browser_object.find_element(by=By.XPATH, value="//button[.='Share']")
+        insta_base.stime()
         ActionChains(browser_object).move_to_element(share_button).click().perform()
-        time.sleep(return_randomtime())
-        log.info('post succesful!')
+        insta_base.stime(True)
+        log.info('post successful!')
         browser_object.quit()
         return True
     except Exception as ex:
@@ -110,13 +126,13 @@ def main():
         driver = insta_base.login_to_site()
         if not driver:
             log.info('attempt failed. trying again')
-            time.sleep(return_randomtime())
+            insta_base.stime(True)
             continue
         file, tag = get_images(insta_base.Settings.image_path)
         next_driver = upload_image(driver, file)
         if not next_driver:
             log.info('attempt failed. trying again')
-            time.sleep(return_randomtime())
+            insta_base.stime(True)
             continue
         combined_tags = f'#{tag} #eddyizm | https://eddyizm.com'
         if process_image(next_driver, combined_tags):
@@ -125,8 +141,9 @@ def main():
             break
         else:
             log.info(f'error posting file.')
-            time.sleep(return_randomtime())
+            insta_base.stime(True)
             continue
+
 
 if __name__ == '__main__':
     # time.sleep(randrange(1,3000))
