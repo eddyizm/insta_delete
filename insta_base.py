@@ -3,7 +3,9 @@ import json
 import logging as log
 import os
 import sys
+from random import randrange
 import time
+
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -28,8 +30,10 @@ def dump_html_to_file(driver):
         w.write(checkhtml.prettify())
 
 
-def stime():
+def stime(randomize: bool = False):
     '''Use this to randomize actions'''
+    if randomize:
+        return time.sleep(randrange(25,60))
     return time.sleep(5)
 
 
