@@ -3,7 +3,6 @@
 from glob import glob
 import os
 import logging
-import time
 
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
@@ -35,21 +34,22 @@ def get_images(folder : str):
 def upload_image(browser_object : webdriver, filepath : str):
     try:
         log.info('finding upload image button')
+        insta_base.stime(True)
         browser_object.file_detector = UselessFileDetector()
-        # if insta_base.check_for_text('Save Your Login Info', browser_object) and insta_base.check_for_text('Turn on Notifications', browser_object):
-        browser_object.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")
-        insta_base.stime()
+        if insta_base.check_for_text('Save Your Login Info', browser_object) and insta_base.check_for_text('Turn on Notifications', browser_object):
+            browser_object.get(f"https://www.instagram.com/")
+        
         new_post_option = browser_object.find_element(by=By.XPATH,
                             value="//*[local-name()='svg' and @aria-label='New post']")
         log.info('found new post option')
         ActionChains(browser_object).move_to_element(new_post_option).click().perform()
-        insta_base.stime(True)
+        
         upload_button = browser_object.find_element(by=By.XPATH,
                             value="//button[text()='Select from computer']")
         log.info('found upload button')
         ActionChains(browser_object).move_to_element(upload_button).click().perform()
         log.info('selecting file on local file system')
-        browser_object.save_screenshot(os.path.join(insta_base.BASE_DIR,'selectingfile.png'))
+        # browser_object.save_screenshot(os.path.join(insta_base.BASE_DIR,'selectingfile.png'))
         pyautogui.write(filepath, interval=0.25)
         pyautogui.press('return')
         pyautogui.press('enter')
@@ -75,7 +75,6 @@ def upload_image(browser_object : webdriver, filepath : str):
 def process_image(browser_object : webdriver, tags : str):
     try:
         log.info('starting process_image')
-        insta_base.stime(True)
         # next_png = os.path.join(insta_base.BASE_DIR, 'screenshots/next.png')
         # btn = pyautogui.locateOnScreen(next_png)
         btn = browser_object.find_element(by=By.XPATH,
@@ -90,16 +89,15 @@ def process_image(browser_object : webdriver, tags : str):
             return False
         btn = browser_object.find_element(by=By.XPATH,
                             value="//button[.='Next']")
-        insta_base.stime(True)
         if btn:
             ActionChains(browser_object).move_to_element(btn).click().perform()
             log.info('found next button, moving to caption screen')
         else:
             log.warn('Next button not found...fail!')
             return False            
-        insta_base.stime(True)
-        add_text = browser_object.find_element(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption…']")
-        insta_base.stime(True)
+        browser_object.implicitly_wait(10)
+        add_text = browser_object.find_element(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption...']")
+        insta_base.stime()
         log.info('writing caption')
         ActionChains(browser_object).move_to_element(add_text).click().send_keys(tags).perform()
         insta_base.stime(True)
