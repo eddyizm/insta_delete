@@ -33,7 +33,7 @@ def dump_html_to_file(driver):
 def stime(randomize: bool = False):
     '''Use this to randomize actions'''
     if randomize:
-        return time.sleep(randrange(25,60))
+        return time.sleep(randrange(5,60))
     return time.sleep(5)
 
 
@@ -72,7 +72,7 @@ def login_to_site():
         options.set_preference('profile', Settings.profile_path)
         service = Service(Settings.firefox_path)
         browser = webdriver.Firefox(service=service, options=options)
-        browser.set_window_size(1200,927)
+        browser.set_window_size(1200,800)
         browser.get("https://www.instagram.com/accounts/login/")
         stime()
         eUser = browser.find_element(by=By.XPATH, value="//input[@name='username']")
