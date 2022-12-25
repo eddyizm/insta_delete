@@ -42,6 +42,12 @@ def parse_href(data):
     return url_list            
 
 
+def find_delete_button(browser):
+    log.info(f'finding delete button...')
+    insta_base.stime(True)
+    return browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
+
+
 def profile_post_min(counter, browser):
     # TODO this function is currently not working and thus returning True regardless
     result = False
@@ -116,21 +122,20 @@ def delete_posts(browser):
             log.info('DELETING POSTS!')
             while (counter > -1):
                 log.info(f'getting new url: {new_file[counter]}')
-                
                 browser.get(new_file[counter])
-                insta_base.stime()
+                insta_base.stime(True)
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
                     log.info('URL not found, removing from list')
                     counter -= 1
                 else:                
-                    options_button = browser.find_element(by=By.XPATH, value="//div[@class='_aasm']//*[@aria-label='More options']")
-                    ActionChains(browser).move_to_element(options_button).click().perform()                
-                    insta_base.stime()
-                    delete_button = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
+                    log.info(f'finding 3 dot options...')
+                    more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[1]
+                    insta_base.stime(True)
+                    ActionChains(browser).move_to_element(more_options).click().perform()
+                    delete_button = find_delete_button(browser)
                     ActionChains(browser).move_to_element(delete_button).click().perform()
-                    insta_base.stime()
-                    confirm_delete = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
+                    confirm_delete = find_delete_button(browser)
                     ActionChains(browser).move_to_element(confirm_delete).click().perform()
                     deleted_urls.append(new_file[counter])
                     insta_base.stime()
@@ -143,7 +148,7 @@ def delete_posts(browser):
             browser.close()
 
         except Exception as err:
-            log.info(err)
+            log.info('Errog deleting posts!', exc_info=True)
             browser.close()
             sys.exit(1)
     
