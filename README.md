@@ -1,5 +1,7 @@
 # insta_delete / insta_upload
 
+insta_delete status: working | 12/27/2022  
+
 * please see below for [insta_upload](#upload) details
   
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L3L01HI5A)
@@ -115,6 +117,6 @@ I'll be adding a few options to fine tune and make it a little more reliable.
 <a name="upload"></a>
 # insta_upload
 
-Status: Not working
+Status: working | 12/27/2022
 
-join me on discord (eddyizm#3389) to fix it!
+join me on discord (eddyizm#3389) to discuss features...
