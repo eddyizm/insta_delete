@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 import json
 import logging as log
+import pickle
 import os
 import sys
 from random import randrange
 import time
-
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -17,6 +17,24 @@ from selenium.webdriver.firefox.service import Service
 from models import Settings
 
 CONFIG = r"C:\Users\eddyizm\HP\config.json"
+
+
+def scroll(browser) -> webdriver:
+    log.info('scrolling full page')
+    return browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
+
+
+def load_cookies(browser):
+    cookies = pickle.load(open("data/cookies.pkl", "rb"))
+    log.info('loading cookies')
+    for cookie in cookies:
+        browser.add_cookie(cookie)
+    return browser
+
+
+def save_cookies(browser):
+    log.info('saving cookies')
+    pickle.dump( browser.get_cookies() , open("data/cookies.pkl","wb"))
 
 
 def get_working_directory(_file):
@@ -63,16 +81,22 @@ def check_for_text(search_value: str, browser: webdriver):
     except Exception as ex:
         return None
         
-        
-def login_to_site():
+
+def get_driver() -> webdriver:        
+    log.info('getting webdriver')
+    options=Options()
+    options.set_preference('profile', Settings.profile_path)
+    service = Service(Settings.firefox_path)
+    browser = webdriver.Firefox(service=service, options=options)
+    browser.set_window_size(1200,800)
+    return browser
+
+
+def login_to_site() -> webdriver:
     try:
-        log.info('logging in as mobile device to delete')
         # user_agent = "Mozilla/5.0 (Android 9; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0"
-        options=Options()
-        options.set_preference('profile', Settings.profile_path)
-        service = Service(Settings.firefox_path)
-        browser = webdriver.Firefox(service=service, options=options)
-        browser.set_window_size(1200,800)
+        browser = get_driver()
+        log.info('logging in')
         browser.get("https://www.instagram.com/accounts/login/")
         stime()
         eUser = browser.find_element(by=By.XPATH, value="//input[@name='username']")
