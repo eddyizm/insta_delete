@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-# from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup, SoupStrainer
@@ -9,15 +8,13 @@ import os
 import sys
 import logging
 
-import insta_base
+import insta_base as ib
 
-linux = False
-URLS = []
-post_counter = 50
 log = logging.getLogger(__name__)
 
+
 def OpenLog():
-    with open(insta_base.Settings.log_path, 'r', encoding= 'utf-8') as g:
+    with open(ib.Settings.log_path, 'r', encoding= 'utf-8') as g:
         lines = g.read().splitlines()
         return (lines)
 
@@ -44,7 +41,7 @@ def parse_href(data):
 
 def find_delete_button(browser):
     log.info(f'finding delete button...')
-    insta_base.stime(True)
+    ib.stime(True)
     return browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
 
 
@@ -52,10 +49,10 @@ def profile_post_min(counter, browser):
     # TODO this function is currently not working and thus returning True regardless
     result = False
     try:
-        browser.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")
+        browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
         log.info(f'checking post count limit currently set at: {counter}')
         post_count = ''
-        insta_base.stime()
+        ib.stime()
         links = BeautifulSoup(browser.page_source, "html.parser", parse_only=SoupStrainer('a'))
         for x in links:
             t = x.get('href')
@@ -79,7 +76,7 @@ def scroll_to_end(browser):
     get_html = None
     log.info('scrolling profile to get more urls')
     try:
-        browser.get(f"https://www.instagram.com/{insta_base.Settings.insta_username}")
+        browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
         #match = check_posts(browser.page_source, post_counter) 
         match = False
         lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
@@ -123,7 +120,7 @@ def delete_posts(browser):
             while (counter > -1):
                 log.info(f'getting new url: {new_file[counter]}')
                 browser.get(new_file[counter])
-                insta_base.stime(True)
+                ib.stime(True)
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
                     log.info('URL not found, removing from list')
@@ -131,20 +128,20 @@ def delete_posts(browser):
                 else:                
                     log.info(f'finding 3 dot options...')
                     more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[1]
-                    insta_base.stime(True)
+                    ib.stime(True)
                     ActionChains(browser).move_to_element(more_options).click().perform()
                     delete_button = find_delete_button(browser)
                     ActionChains(browser).move_to_element(delete_button).click().perform()
                     confirm_delete = find_delete_button(browser)
                     ActionChains(browser).move_to_element(confirm_delete).click().perform()
                     deleted_urls.append(new_file[counter])
-                    insta_base.stime()
+                    ib.stime()
                     log.info('POST DELETED: '+new_file[counter])
                     counter -= 1
 
             l3 = [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
-            WriteToArchive(insta_base.Settings.log_path, l3)	    
+            WriteToArchive(ib.Settings.log_path, l3)	    
             browser.close()
 
         except Exception as err:
@@ -153,24 +150,27 @@ def delete_posts(browser):
             sys.exit(1)
     
 
-if __name__ == '__main__':
+def main():
     log.info('----------------------------------------------------------------------------------------------------- ')
-    log.info('--------------------------------------- new session ------------------------------------------------- ')
+    log.info('--------------------------------------- new insta_delete session ------------------------------------------------- ')
     log.info('----------------------------------------------------------------------------------------------------- ')
-    file_size = os.stat(insta_base.Settings.log_path).st_size
+    file_size = os.stat(ib.Settings.log_path).st_size
     log.info('file size: '+ str(file_size))
-    agent = insta_base.login_to_site()
-    if (os.stat(insta_base.Settings.log_path).st_size == 0):
+    agent = ib.login_to_site()
+    if (os.stat(ib.Settings.log_path).st_size == 0):
         log.info('file empty, going to scroll')
         source_data = scroll_to_end(browser=agent)
         URLS = parse_href(source_data)
-        WriteToArchive(insta_base.Settings.log_path, URLS)    
+        WriteToArchive(ib.Settings.log_path, URLS)    
     # # manually load html file
-    # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8') ) 
-    # if profile_post_min(counter=post_counter, browser=agent):
+    # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8')
+    ib.save_cookies(agent) 
     delete_posts(browser=agent)
     log.info('----------------------------------------------------------------------------------------------------- ')
-    log.info('--------------------------------------- end session ------------------------------------------------- ')
+    log.info('--------------------------------------- end insta_delete session ------------------------------------------------- ')
     log.info('----------------------------------------------------------------------------------------------------- ')
-
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()
