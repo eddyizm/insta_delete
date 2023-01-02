@@ -67,10 +67,11 @@ def upload_image(browser_object : webdriver, filepath : str):
 def process_image(browser_object : webdriver, tags : str):
     try:
         log.info('starting process_image')
-        insta_base.stime(True)
+        insta_base.stime()
+        log.info('looking for next button')
         btn = browser_object.find_element(by=By.XPATH,
                             value="//button[.='Next']")
-        insta_base.stime()
+        insta_base.stime(True)
         if btn:
             log.info('found next button')
             ActionChains(browser_object).move_to_element(btn).click().perform()
@@ -109,13 +110,11 @@ def process_image(browser_object : webdriver, tags : str):
 
 
 def main():
-    log.info('----------------------------------------------------------------------------------------------------- ')
-    log.info('--------------------------------------- new insta_upload session ------------------------------------- ')
-    log.info('------------------------------------------------------------------------------------------------------ ')
+    insta_base.start_end_log(__file__)
     attempts = 1
     while attempts > 0:
         attempts = attempts -1
-        driver = insta_base.login_to_site()
+        driver = insta_base.login_with_cookies()
         if not driver:
             log.info('attempt failed. trying again')
             insta_base.stime(True)
@@ -135,7 +134,7 @@ def main():
             log.info(f'error posting file.')
             insta_base.stime(True)
             continue
-
+    insta_base.start_end_log(__file__, True)
 
 if __name__ == '__main__':
     insta_base.stime(True)
