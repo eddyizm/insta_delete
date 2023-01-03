@@ -84,6 +84,7 @@ def scroll_to_end(browser):
         while(match==False):
             lastCount = lenOfPage
             time.sleep(10)
+            log.info('scrolling ...')    
             lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
             count += 1
             # added count to ensure only older images get picked up. 
@@ -151,24 +152,17 @@ def delete_posts(browser):
     
 
 def main():
-    log.info('----------------------------------------------------------------------------------------------------- ')
-    log.info('--------------------------------------- new insta_delete session ------------------------------------------------- ')
-    log.info('----------------------------------------------------------------------------------------------------- ')
+    ib.start_end_log(__file__)
     file_size = os.stat(ib.Settings.log_path).st_size
-    log.info('file size: '+ str(file_size))
-    agent = ib.login_to_site()
-    if (os.stat(ib.Settings.log_path).st_size == 0):
+    agent = ib.login_with_cookies()
+    if (file_size == 0):
         log.info('file empty, going to scroll')
         source_data = scroll_to_end(browser=agent)
         URLS = parse_href(source_data)
         WriteToArchive(ib.Settings.log_path, URLS)    
-    # # manually load html file
-    # URLS = parse_href( open(ig_html, 'r',  encoding= 'utf-8')
     ib.save_cookies(agent) 
     delete_posts(browser=agent)
-    log.info('----------------------------------------------------------------------------------------------------- ')
-    log.info('--------------------------------------- end insta_delete session ------------------------------------------------- ')
-    log.info('----------------------------------------------------------------------------------------------------- ')
+    ib.start_end_log(__file__, end_log=True)
     sys.exit(0)
 
 
