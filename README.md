@@ -1,8 +1,10 @@
-# insta_delete / insta_upload
+# insta_delete / insta_upload / insta_like
 
 insta_delete status: working | 12/27/2022  
 
-* please see below for [insta_upload](#upload) details
+* please see below for  
+> [insta_upload](#upload)  
+> [insta_like](#like) 
   
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L3L01HI5A)
 
@@ -118,5 +120,10 @@ I'll be adding a few options to fine tune and make it a little more reliable.
 # insta_upload
 
 Status: working | 12/27/2022
+
+<a name="like"></a>
+# insta_like
+
+Status: working |  01/02/2023. finally got a loop working, tested 4 likes. 
 
 join me on discord (eddyizm#3389) to discuss features...
