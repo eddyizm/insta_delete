@@ -64,7 +64,7 @@ def get_working_directory(_file):
 
 def start_end_log(file, end_log=False):
     log.info('-----------------------------------------------------------')
-    prefix = 'end' if end_log else 'new'
+    prefix = 'end' if end_log else 'start'
     log.info(f'{prefix} {get_file_name(file)} session -------------------')
     log.info('-----------------------------------------------------------')
 
