@@ -79,8 +79,8 @@ def main():
     like_multiple_posts(driver, posts_to_like=4)
     ib.save_cookies(driver)
     driver.close()
-    ib.start_end_log(__file__, end_log=True)
 
 
 if __name__ == "__main__":
     main()
+    ib.start_end_log(__file__, end_log=True)
