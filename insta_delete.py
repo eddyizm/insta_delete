@@ -13,13 +13,15 @@ import insta_base as ib
 log = logging.getLogger(__name__)
 
 
-def OpenLog():
+def open_archive():
+    """open and read archive file of collected urls"""
     with open(ib.Settings.log_path, 'r', encoding= 'utf-8') as g:
         lines = g.read().splitlines()
         return (lines)
 
 
-def WriteToArchive(log, data):
+def write_to_archive(log, data):
+    """write collected urls to file"""
     with open(log, 'w', encoding= 'utf-8') as f:
         for d in data:
             if d.startswith('https://www.instagram.com/'):
@@ -102,7 +104,7 @@ def scroll_to_end(browser):
 
 
 def delete_posts(browser):
-        links = OpenLog()
+        links = open_archive()
         new_file = []
         deleted_urls = []
         counter = 10
@@ -142,7 +144,7 @@ def delete_posts(browser):
 
             l3 = [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
-            WriteToArchive(ib.Settings.log_path, l3)	    
+            write_to_archive(ib.Settings.log_path, l3)	    
             browser.close()
 
         except Exception as err:
@@ -159,12 +161,11 @@ def main():
         log.info('file empty, going to scroll')
         source_data = scroll_to_end(browser=agent)
         URLS = parse_href(source_data)
-        WriteToArchive(ib.Settings.log_path, URLS)    
+        write_to_archive(ib.Settings.log_path, URLS)    
     ib.save_cookies(agent) 
     delete_posts(browser=agent)
-    ib.start_end_log(__file__, end_log=True)
-    sys.exit(0)
-
+    
 
 if __name__ == '__main__':
     main()
+    ib.start_end_log(__file__, end_log=True)
