@@ -1,0 +1,13 @@
+{
+    "instagram": {
+        "login": "<YOUR_LOGIN>",
+        "pass": "<YOUR_PASSWORD>"
+    },
+    "windows": {
+        "image_path": "/path/to/files/data/images",
+        "log_path" : "/path/to/files/data/media_urls.txt",
+        "app_log" : "/path/to/files/data/insta_delete.log",
+        "firefox_path" : "/path/to/files/data/geckodriver.exe",
+        "profile_path" : "/path/to/AppData/Roaming/Mozilla/Firefox/Profiles/<profile>.default-release"
+    }
+}
