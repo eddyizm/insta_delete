@@ -27,40 +27,42 @@ def get_images(folder : str):
         if os.path.isfile(filename):
             fullpath = filename
             break # get first directory if it exists
-    foldertag = os.path.basename(os.path.dirname(fullpath))
+    foldertag = f'#{os.path.basename(os.path.dirname(fullpath))} #eddyizm | https://eddyizm.com'
     return fullpath, foldertag
 
 
-def upload_image(browser_object : webdriver, filepath : str):
+def select_local_file(full_file_path):
+    """pyautogui actions to select file and close pop up"""
+    log.info(f'selecting file on local file system: {full_file_path}')
+    pyautogui.write(full_file_path)
+    ib.stime
+    pyautogui.press('tab')
+    pyautogui.press('tab')
+    ib.stime
+    pyautogui.press('enter')
+    log.info('window explorer tabbed and hit entered to close')
+
+
+def upload_image(browser : webdriver, filepath : str):
     try:
         log.info('finding upload image button')
         ib.stime(True)
-        browser_object.file_detector = UselessFileDetector()
-        if ib.check_for_text('Save Your Login Info', browser_object) and ib.check_for_text('Turn on Notifications', browser_object):
-            browser_object.get(f"https://www.instagram.com/")
-        
-        new_post_option = browser_object.find_element(by=By.XPATH,
+        browser.file_detector = UselessFileDetector()
+        new_post_option = browser.find_element(by=By.XPATH,
                             value="//*[local-name()='svg' and @aria-label='New post']")
         log.info('found new post option')
-        ActionChains(browser_object).move_to_element(new_post_option).click().perform()
+        ActionChains(browser).move_to_element(new_post_option).click().perform()
         ib.stime(True)
-        upload_button = browser_object.find_element(by=By.XPATH,
+        upload_button = browser.find_element(by=By.XPATH,
                             value="//button[text()='Select from computer']")
         log.info('found select from computer button')
         ib.stime()
-        ActionChains(browser_object).move_to_element(upload_button).click().perform()
-        # browser_object.save_screenshot(os.path.join(insta_base.BASE_DIR,'selectingfile.png'))
+        ActionChains(browser).move_to_element(upload_button).click().perform()
         ib.stime(True)
-        log.info(f'selecting file on local file system: {filepath}')
-        pyautogui.write(filepath)
-        pyautogui.press('tab')
-        pyautogui.press('tab')
-        pyautogui.press('enter')
-        log.info('window explorer tabbed and hit entered to close')
+        select_local_file(filepath)
         ib.stime()
-        return browser_object
     except Exception as ex:
-        browser_object.quit()
+        browser.quit()
         log.error('error in upload_image():', exc_info=True)
 
 
@@ -111,29 +113,16 @@ def process_image(browser_object : webdriver, tags : str):
 
 def main():
     ib.start_end_log(__file__)
-    attempts = 1
-    while attempts > 0:
-        attempts = attempts -1
-        driver = ib.login_with_cookies()
-        if not driver:
-            log.info('attempt failed. trying again')
-            ib.stime(True)
-            continue
+    driver = ib.login_with_cookies()
+    try:
         file, tag = get_images(ib.Settings.image_path)
-        next_driver = upload_image(driver, file)
-        if not next_driver:
-            log.info('attempt failed. trying again')
-            ib.stime(True)
-            continue
-        combined_tags = f'#{tag} #eddyizm | https://eddyizm.com'
-        if process_image(next_driver, combined_tags):
+        upload_image(driver, file)
+        if process_image(driver, tag):
             os.remove(file)
             log.info(f'file posted successfully and deleted: {file}')
-            break
-        else:
-            log.info(f'error posting file.')
-            ib.stime(True)
-            continue
+    except Exception as ex:
+        log.info(f'error posting file.', exc_info=True)
+        ib.start_end_log(__file__, True)
 
 
 if __name__ == '__main__':
