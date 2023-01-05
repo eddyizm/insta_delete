@@ -10,20 +10,13 @@ insta_delete status: working | 12/27/2022
 
  Short demo on [youtube](https://youtu.be/3YaTVtTsMgY).
 
-Selenium, BS4 powered script to delete old instagram posts.
+Selenium, BS4 powered script to delete old instagram posts, upload new images, and like posts in my feed.
 
 Working with selenium can be challenging if you have no previous experience with it. Part of this project was for me to get more comfortable using selenium on an ever changing UI. 
 
-## Updates  
-Added a hard limit on profile posts to make sure it doesn't exceed a preferred mininum. Adjust the variable to make sure that quantity stays.   
-```
-post_counter = 500
-```
-
-
 ## Prerequisites
 
-Download `geckodriver` for your system [here](https://github.com/mozilla/geckodriver/releases). The script uses geckodriver after setting it in the path variables. Otherwise you can specify the specific location of the executable. 
+Download `geckodriver` for your system [here](https://github.com/mozilla/geckodriver/releases). The script uses geckodriver after setting it in the path variables. Otherwise you can specify the specific location of the executable. You also need firefox installed unless you are going to be using chromedriver, in which case you will probably need a chrome based browser eg. Brave, Edge or Chrome. 
 
 
 ```
@@ -61,14 +54,13 @@ Config file format
     }
 
 ### Scheduled Task / Cron Tab
-On my windows machine I set up a scheduled task that fires off the script via a batch file set up to activate virtual environment and append output results to log file. Linux and Mac would be just as easy using crontab.
+On my windows machine I set up a scheduled task that fires off the script via a batch file set up to activate virtual environment using git bash. 
 
-    REM ************************************************************
-    REM Batch file to run python insta_delete script
-    REM ************************************************************
+    #!/bin/bash
 
-    @echo off
-    cmd /k "cd /d /path/to/files/insta_delete/env/Scripts && activate && cd /d  /path/to/files/insta_delete/ && python insta_delete.py     
+    # calling insta scripts via shell file. 
+    source <PATH TO CODE>/insta_delete/env/Scripts/activate
+    python <PATH TO CODE>/insta_delete/<script name> # eg insta_upload.py
 
 ### Log File Output
 Handy for debugging and keeping track of how long the scrolling takes and deleting progress. I tail this file to my dropbox or email to keep an eye on it.
@@ -111,11 +103,6 @@ Handy for debugging and keeping track of how long the scrolling takes and deleti
     2022-08-21 13:36:40,474 | INFO | ----------------------------------------------------------------------------------------------------- 
 
 
-## TODO
-I'll be adding a few options to fine tune and make it a little more reliable.
-1. Capture the date of the post in order to delete by date.
-2. Get all the hyperlinks of the images in bulk, while scrolling and not the tail end.
-
 <a name="upload"></a>
 # insta_upload
 
@@ -126,4 +113,11 @@ Status: working | 12/27/2022
 
 Status: working |  01/02/2023. finally got a loop working, tested 4 likes. 
 
-join me on discord (eddyizm#3389) to discuss features...
+join me on discord (eddyizm#3389) to discuss features/todos or open an issue...
+
+## TODO
+I'll be adding a few options to fine tune and make it a little more reliable.
+* Capture the date of the post in order to delete by date.
+* Add a hard limit on profile posts to make sure it doesn't exceed a preferred mininum. Adjust the variable to make sure that quantity stays.  
+* Get all the hyperlinks of the images in bulk, while scrolling and not the tail end.
+* Create a cli entry point to control and call the 3 different automations, possibly mixing them up and passing variables.  
