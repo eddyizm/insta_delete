@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 ''' writing a script to like posts in my thread '''
 import insta_base as ib
-import insta_upload as iu
 import insta_delete as id
 import logging
 import pickle
