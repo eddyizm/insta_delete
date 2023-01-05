@@ -2,7 +2,6 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup, SoupStrainer
-from datetime import datetime
 import time
 import os
 import sys
@@ -14,10 +13,14 @@ log = logging.getLogger(__name__)
 
 
 def open_archive():
-    """open and read archive file of collected urls"""
+    """open and read archive file of filtered urls"""
+    new_file = []
     with open(ib.Settings.log_path, 'r', encoding= 'utf-8') as g:
         lines = g.read().splitlines()
-        return (lines)
+        for l in lines:
+            if l.startswith('https://www.instagram.com/p/'):
+                new_file.append(l)
+        return new_file
 
 
 def write_to_archive(log, data):
@@ -79,7 +82,6 @@ def scroll_to_end(browser):
     log.info('scrolling profile to get more urls')
     try:
         browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
-        #match = check_posts(browser.page_source, post_counter) 
         match = False
         lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
         count = 0
@@ -96,28 +98,17 @@ def scroll_to_end(browser):
         get_html = browser.page_source                       
         browser.close()
         log.info('scrolled down: '+str(count)+' times!')
-        log.info(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     except Exception as err:
-        log.info(err)
+        log.info('error scrolling to end', exc_info=True)
         browser.close()
     return get_html
 
 
 def delete_posts(browser):
-        links = open_archive()
-        new_file = []
         deleted_urls = []
-        counter = 10
-        for l in links:
-            if l.startswith('https://www.instagram.com/p/'):
-                new_file.append(l)
-        
-        log.info('length of file: '+str(len(new_file)))
-        if (counter >= len(new_file)):
-            counter = (len(new_file) - 1)
-        
+        new_file = open_archive()
+        counter = (len(new_file) - 1) if (10 >= len(new_file)) else 10
         log.info('number of posts to delete: '+str(counter))
-        
         try:
             log.info('DELETING POSTS!')
             while (counter > -1):
@@ -142,29 +133,30 @@ def delete_posts(browser):
                     log.info('POST DELETED: '+new_file[counter])
                     counter -= 1
 
-            l3 = [x for x in new_file if x not in deleted_urls]
+            remaining_urls = [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
-            write_to_archive(ib.Settings.log_path, l3)	    
-            browser.close()
-
+            write_to_archive(ib.Settings.log_path, remaining_urls)	    
         except Exception as err:
             log.info('Errog deleting posts!', exc_info=True)
-            browser.close()
             sys.exit(1)
     
 
-def main():
-    ib.start_end_log(__file__)
-    file_size = os.stat(ib.Settings.log_path).st_size
-    agent = ib.login_with_cookies()
+def scrape_urls(driver, file_size):
+    """scrape for new url's to delete if current list is empty"""
     if (file_size == 0):
         log.info('file empty, going to scroll')
-        source_data = scroll_to_end(browser=agent)
+        source_data = scroll_to_end(browser=driver)
         URLS = parse_href(source_data)
         write_to_archive(ib.Settings.log_path, URLS)    
-    ib.save_cookies(agent) 
-    delete_posts(browser=agent)
-    
+
+
+def main():
+    ib.start_end_log(__file__)
+    driver = ib.login_with_cookies()
+    scrape_urls(driver, file_size=os.stat(ib.Settings.log_path).st_size)
+    delete_posts(browser=driver)
+    ib.save_cookies(driver) 
+    driver.close()
 
 if __name__ == '__main__':
     main()
