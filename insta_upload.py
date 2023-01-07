@@ -4,11 +4,13 @@ from glob import glob
 import os
 import logging
 
+
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.file_detector import UselessFileDetector
 
+from sys import exit
 from random import shuffle
 import pyautogui
 
@@ -103,7 +105,7 @@ def process_image(browser_object : webdriver, tags : str):
         ActionChains(browser_object).move_to_element(share_button).click().perform()
         ib.stime(True)
         log.info('post successful!')
-        browser_object.quit()
+        ib.save_cookies(browser_object)
         return True
     except Exception as ex:
         log.error('error in process_image():',  exc_info=True)
@@ -118,13 +120,16 @@ def main():
         file, tag = get_images(ib.Settings.image_path)
         upload_image(driver, file)
         if process_image(driver, tag):
+            driver.quit()
             os.remove(file)
             log.info(f'file posted successfully and deleted: {file}')
     except Exception as ex:
         log.info(f'error posting file.', exc_info=True)
         ib.start_end_log(__file__, True)
+        exit(1)
 
 
 if __name__ == '__main__':
     main()
     ib.start_end_log(__file__, True)
+    exit(0)
