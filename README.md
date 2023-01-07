@@ -28,6 +28,21 @@ For more help: https://github.com/mozilla/geckodriver
 
 ## Installation
 
+This guide assumes you already have python 3 and git installed.  
+
+Clone repository  
+
+    git clone https://github.com/eddyizm/insta_delete.git  
+
+Create a virtual environment  
+
+    cd <newly cloned git repo>
+    python -m venv env
+
+Activate virtual environment and install requirements
+
+    # using git bash
+    source env/Scripts/activate  
     pip install -r requirements.txt
 
 ## Usage
