@@ -77,11 +77,11 @@ On my windows machine I set up a scheduled task that fires off the script via a 
     source <PATH TO CODE>/insta_delete/env/Scripts/activate
     python <PATH TO CODE>/insta_delete/<script name> # eg insta_upload.py
 
-### Log File Output
-Handy for debugging and keeping track of how long the scrolling takes and deleting progress. I tail this file to my dropbox or email to keep an eye on it.
+### Logs
+For debugging and keeping track of progress. All the scripts share the same log and are delinated with their filename as a sesion. Note that the scripts can run concurrently on separate threads and log to the same file. That is interesting and not intended. 
 
     2022-08-21 13:31:58,860 | INFO | ----------------------------------------------------------------------------------------------------- 
-    2022-08-21 13:31:58,861 | INFO | --------------------------------------- new session ------------------------------------------------- 
+    2022-08-21 13:31:58,861 | INFO | start insta_delete.py session -------------------
     2022-08-21 13:31:58,862 | INFO | ----------------------------------------------------------------------------------------------------- 
     2022-08-21 13:31:58,862 | INFO | file size: 3131
     2022-08-21 13:31:58,862 | INFO | logging in as mobile device to delete
@@ -114,7 +114,7 @@ Handy for debugging and keeping track of how long the scrolling takes and deleti
     2022-08-21 13:36:39,085 | INFO | while loop done and exited successfully
     2022-08-21 13:36:39,086 | INFO | 2022-08-21 13:36:39
     2022-08-21 13:36:40,473 | INFO | ----------------------------------------------------------------------------------------------------- 
-    2022-08-21 13:36:40,474 | INFO | --------------------------------------- end session ------------------------------------------------- 
+    2022-08-21 13:36:40,474 | INFO | end insta_delete.py session -------------------
     2022-08-21 13:36:40,474 | INFO | ----------------------------------------------------------------------------------------------------- 
 
 
