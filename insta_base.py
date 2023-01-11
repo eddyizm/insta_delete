@@ -79,15 +79,16 @@ def dump_html_to_file(driver):
 def stime(randomize: bool = False):
     '''Use this to randomize actions'''
     if randomize:
-        return time.sleep(randrange(5,60))
-    return time.sleep(5)
+        return time.sleep(randrange(10,60)) #TODO depreciate the boolean, just make it random every time
+    return time.sleep(randrange(10,60))
 
 
-def click_element(browser, elem):
+def click_element(browser, elem, elem_name=None):
     try:
-        log.info(f'clicking element: {elem}')
+        _name = elem if elem_name is None else elem_name
+        log.info(f'clicking element: {_name}')
         ActionChains(browser).move_to_element(elem).click().perform()
-        log.info('element clicked successfully!')
+        log.info(f'{_name} clicked successfully!')
     except MoveTargetOutOfBoundsException:
         log.info('Error click_element', exc_info=True)
         
@@ -95,15 +96,12 @@ def click_element(browser, elem):
 def login_with_cookies() -> webdriver:
     driver = get_driver()
     driver.get("https://www.instagram.com/")
-    stime()
     load_cookies(driver)
     
     driver.get("https://www.instagram.com/")
-    stime()
     if check_for_text('Turn on Notifications', driver):
         not_now_btn = driver.find_element(by=By.XPATH, value="//*[contains(text(), 'Not Now')]")
         click_element(driver, not_now_btn)
-        stime()
     else:
         driver = login_to_site(driver)
     return driver
@@ -143,6 +141,7 @@ def get_driver() -> webdriver:
     service = Service(Settings.firefox_path)
     browser = webdriver.Firefox(service=service, options=options)
     browser.set_window_size(1200,800)
+    browser.implicitly_wait(10)
     return browser
 
 
@@ -150,31 +149,24 @@ def login_to_site(browser) -> webdriver:
     try:
         log.info('logging in')
         browser.get("https://www.instagram.com/accounts/login/")
-        stime()
         eUser = browser.find_element(by=By.XPATH, value="//input[@name='username']")
         log.info(f'found username element: {eUser}')
-        stime()
         ActionChains(browser).move_to_element(eUser). \
             click().send_keys(Settings.insta_username).perform()
-        stime()
         ePass = browser.find_element(by=By.XPATH, value="//input[@name='password']")
         log.info(f'found password element: {ePass}')
-        stime()
         ActionChains(browser).move_to_element(ePass). \
             click().send_keys(Settings.insta_password).perform()
-        stime()
         login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
             #"//button[text()='Log In']")
             #"//form/span/button[text()='Log In']")
         log.info(f'found login element: {login_button}')
         ActionChains(browser).move_to_element(login_button).click().perform()
-        stime()
         log.info('login successful...')
         save_cookies(browser)
         return browser
     except Exception as err:
         log.info('Errog logging in to site', exc_info=True)
-        # browser.close()
         sys.exit(1)
 
 # call settings/functions to use in app
