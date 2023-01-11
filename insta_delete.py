@@ -2,7 +2,6 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup, SoupStrainer
-import time
 import os
 import sys
 import logging
@@ -45,9 +44,11 @@ def parse_href(data):
 
 
 def find_delete_button(browser):
+    '''find delete button and click!'''
     log.info(f'finding delete button...')
-    ib.stime(True)
-    return browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
+    ib.stime
+    delete = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
+    ib.click_element(browser, delete, 'delete')
 
 
 def profile_post_min(counter, browser):
@@ -87,7 +88,7 @@ def scroll_to_end(browser):
         count = 0
         while(match==False):
             lastCount = lenOfPage
-            time.sleep(10)
+            ib.stime
             log.info('scrolling ...')    
             lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
             count += 1
@@ -114,7 +115,7 @@ def delete_posts(browser):
             while (counter > -1):
                 log.info(f'getting new url: {new_file[counter]}')
                 browser.get(new_file[counter])
-                ib.stime(True)
+                ib.stime
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
                     log.info('URL not found, removing from list')
@@ -122,14 +123,11 @@ def delete_posts(browser):
                 else:                
                     log.info(f'finding 3 dot options...')
                     more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[1]
-                    ib.stime(True)
-                    ActionChains(browser).move_to_element(more_options).click().perform()
-                    delete_button = find_delete_button(browser)
-                    ActionChains(browser).move_to_element(delete_button).click().perform()
-                    confirm_delete = find_delete_button(browser)
-                    ActionChains(browser).move_to_element(confirm_delete).click().perform()
+                    ib.stime
+                    ib.click_element(browser, more_options, 'more options')
+                    find_delete_button(browser)
+                    find_delete_button(browser)
                     deleted_urls.append(new_file[counter])
-                    ib.stime()
                     log.info('POST DELETED: '+new_file[counter])
                     counter -= 1
 
