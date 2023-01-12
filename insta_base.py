@@ -80,7 +80,7 @@ def stime(randomize: bool = False):
     '''Use this to randomize actions'''
     if randomize:
         return time.sleep(randrange(10,60)) #TODO depreciate the boolean, just make it random every time
-    return time.sleep(randrange(10,60))
+    return time.sleep(randrange(5,60))
 
 
 def click_element(browser, elem, elem_name=None):
@@ -141,7 +141,7 @@ def get_driver() -> webdriver:
     service = Service(Settings.firefox_path)
     browser = webdriver.Firefox(service=service, options=options)
     browser.set_window_size(1200,800)
-    browser.implicitly_wait(10)
+    browser.implicitly_wait(15)
     return browser
 
 
@@ -158,8 +158,6 @@ def login_to_site(browser) -> webdriver:
         ActionChains(browser).move_to_element(ePass). \
             click().send_keys(Settings.insta_password).perform()
         login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
-            #"//button[text()='Log In']")
-            #"//form/span/button[text()='Log In']")
         log.info(f'found login element: {login_button}')
         ActionChains(browser).move_to_element(login_button).click().perform()
         log.info('login successful...')
