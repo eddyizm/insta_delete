@@ -1,10 +1,9 @@
 # -*- coding: UTF-8 -*-
 import json
-import logging as log
-import pickle
 import os
+import pickle
+import logging as log
 import sys
-from random import randrange
 import time
 
 from bs4 import BeautifulSoup
@@ -15,6 +14,7 @@ from selenium.common.exceptions import MoveTargetOutOfBoundsException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
+from random import randrange
 
 from models import Settings
 
@@ -63,10 +63,8 @@ def get_working_directory(_file):
 
 
 def start_end_log(file, end_log=False):
-    log.info('-----------------------------------------------------------')
     prefix = 'end' if end_log else 'start'
     log.info(f'{prefix} {get_file_name(file)} session -------------------')
-    log.info('-----------------------------------------------------------')
 
 
 def dump_html_to_file(driver):
@@ -97,7 +95,6 @@ def login_with_cookies() -> webdriver:
     driver = get_driver()
     driver.get("https://www.instagram.com/")
     load_cookies(driver)
-    
     driver.get("https://www.instagram.com/")
     if check_for_text('Turn on Notifications', driver):
         not_now_btn = driver.find_element(by=By.XPATH, value="//*[contains(text(), 'Not Now')]")
