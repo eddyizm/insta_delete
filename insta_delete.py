@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
+import os
+import logging
+import sys
+
+from bs4 import BeautifulSoup, SoupStrainer
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from bs4 import BeautifulSoup, SoupStrainer
-import os
-import sys
-import logging
 
 import insta_base as ib
 
@@ -39,7 +40,6 @@ def parse_href(data):
             t = link.get('href')
             if t is not None:
                 url_list.append(t)
-                
     return url_list            
 
 
@@ -79,7 +79,6 @@ def profile_post_min(counter, browser):
 
 
 def scroll_to_end(browser):
-    get_html = None
     log.info('scrolling profile to get more urls')
     try:
         browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
@@ -95,14 +94,10 @@ def scroll_to_end(browser):
             # added count to ensure only older images get picked up. 
             if (lastCount==lenOfPage) and (count > 25):
                 match=True
-                
-        get_html = browser.page_source                       
-        browser.close()
         log.info('scrolled down: '+str(count)+' times!')
     except Exception as err:
         log.info('error scrolling to end', exc_info=True)
-        browser.close()
-    return get_html
+    return browser.page_source
 
 
 def delete_posts(browser):
@@ -130,7 +125,6 @@ def delete_posts(browser):
                     deleted_urls.append(new_file[counter])
                     log.info('POST DELETED: '+new_file[counter])
                     counter -= 1
-
             remaining_urls = [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
             write_to_archive(ib.Settings.log_path, remaining_urls)	    
@@ -155,6 +149,7 @@ def main():
     delete_posts(browser=driver)
     ib.save_cookies(driver) 
     driver.close()
+
 
 if __name__ == '__main__':
     main()
