@@ -1,11 +1,12 @@
 # -*- coding: UTF-8 -*-
 ''' writing a script to like posts in my thread '''
-import insta_base as ib
-import insta_delete as id
 import logging
 import pickle
+
 from selenium.webdriver.common.by import By
 
+import insta_base as ib
+import insta_delete as id
 
 log = logging.getLogger(__name__)
 
@@ -35,9 +36,8 @@ def find_like(browser):
 def delete_with_cookies():
     driver = ib.get_driver()
     driver.get("https://www.instagram.com/")
-    ib.stime()
     ib.load_cookies(driver)
-    ib.stime(True)
+    ib.stime
     id.delete_posts(browser=driver)
 
 
@@ -50,7 +50,6 @@ def inspect_cookies():
 
 def like_post(driver):
     like_btn = find_like(driver)
-    ib.stime()
     if like_btn and like_btn.is_displayed():
         log.info(f'is like btn displayed? : {like_btn.is_displayed()}')
         log.info('scrolling into view')
@@ -63,12 +62,10 @@ def like_post(driver):
 
 def like_multiple_posts(driver, posts_to_like:int = 1):
     log.info('liking multiple posts')
-    ib.stime(True)
     while (posts_to_like > 0):
         like_post(driver)
-        ib.stime()
         driver.get('https://www.instagram.com/')
-        ib.stime(True)
+        ib.stime
         posts_to_like -= 1
 
 
