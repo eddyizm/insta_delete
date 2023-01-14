@@ -37,7 +37,7 @@ def delete_with_cookies():
     driver = ib.get_driver()
     driver.get("https://www.instagram.com/")
     ib.load_cookies(driver)
-    ib.stime
+    ib.stime()
     id.delete_posts(browser=driver)
 
 
@@ -65,7 +65,7 @@ def like_multiple_posts(driver, posts_to_like:int = 1):
     while (posts_to_like > 0):
         like_post(driver)
         driver.get('https://www.instagram.com/')
-        ib.stime
+        ib.stime()
         posts_to_like -= 1
 
 
