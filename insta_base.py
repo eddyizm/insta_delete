@@ -74,11 +74,11 @@ def dump_html_to_file(driver):
         w.write(checkhtml.prettify())
 
 
-def stime(randomize: bool = False):
+def stime():
     '''Use this to randomize actions'''
-    if randomize:
-        return time.sleep(randrange(10,60)) #TODO depreciate the boolean, just make it random every time
-    return time.sleep(randrange(5,60))
+    sleep_time = randrange(5,60)
+    log.info(f'sleeping for {sleep_time} seconds...')
+    return time.sleep(sleep_time)
 
 
 def click_element(browser, elem, elem_name=None):
