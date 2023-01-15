@@ -45,7 +45,7 @@ def parse_href(data):
 def find_delete_button(browser):
     '''find delete button and click!'''
     log.info(f'finding delete button...')
-    ib.stime()
+    ib.random_time()
     delete = browser.find_element(by=By.XPATH, value="//button[text()='Delete']")
     ib.click_element(browser, delete, 'delete')
 
@@ -57,7 +57,7 @@ def profile_post_min(counter, browser):
         browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
         log.info(f'checking post count limit currently set at: {counter}')
         post_count = ''
-        ib.stime()()
+        ib.random_time()
         links = BeautifulSoup(browser.page_source, "html.parser", parse_only=SoupStrainer('a'))
         for x in links:
             t = x.get('href')
@@ -86,7 +86,7 @@ def scroll_to_end(browser):
         count = 0
         while(match==False):
             lastCount = lenOfPage
-            ib.stime()
+            ib.random_time()
             log.info('scrolling ...')    
             lenOfPage = browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
             count += 1
@@ -102,7 +102,7 @@ def scroll_to_end(browser):
 def delete_post(browser, url, url_list):
     log.info(f'finding 3 dot options...')
     more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[1]
-    ib.stime()
+    ib.random_time()
     ib.click_element(browser, more_options, 'more options')
     find_delete_button(browser)
     find_delete_button(browser)
@@ -121,7 +121,7 @@ def delete_posts(browser):
             while (counter > -1):
                 log.info(f'getting new url: {new_file[counter]}')
                 browser.get(new_file[counter])
-                ib.stime()
+                ib.random_time()
                 if ("Sorry, this page isn't available." in browser.page_source):
                     deleted_urls.append(new_file[counter])
                     log.info('URL not found, removing from list')
