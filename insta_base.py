@@ -74,7 +74,7 @@ def dump_html_to_file(driver):
         w.write(checkhtml.prettify())
 
 
-def stime():
+def random_time():
     '''Use this to randomize actions'''
     sleep_time = randrange(5,60)
     log.info(f'sleeping for {sleep_time} seconds...')
