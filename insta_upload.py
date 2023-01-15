@@ -34,10 +34,10 @@ def select_local_file(full_file_path):
     """pyautogui actions to select file and close pop up"""
     log.info(f'selecting file on local file system: {full_file_path}')
     pyautogui.write(full_file_path)
-    ib.stime()
+    ib.random_time()
     pyautogui.press('tab')
     pyautogui.press('tab')
-    ib.stime()
+    ib.random_time()
     pyautogui.press('enter')
     log.info('window explorer tabbed and hit entered to close')
 
@@ -45,18 +45,18 @@ def select_local_file(full_file_path):
 def upload_image(browser : webdriver, filepath : str):
     try:
         log.info('finding upload image button')
-        ib.stime()
+        ib.random_time()
         browser.file_detector = UselessFileDetector()
         new_post_option = browser.find_element(by=By.XPATH,
                             value="//*[local-name()='svg' and @aria-label='New post']")
         log.info('found new post option')
         ib.click_element(browser, new_post_option, 'new post option')
-        ib.stime()
+        ib.random_time()
         upload_button = browser.find_element(by=By.XPATH,
                             value="//button[text()='Select from computer']")
         log.info('found select from computer button')
         ib.click_element(browser, upload_button, 'upload button')
-        ib.stime()
+        ib.random_time()
         select_local_file(filepath)
     except Exception as ex:
         browser.quit()
@@ -66,7 +66,7 @@ def upload_image(browser : webdriver, filepath : str):
 def find_next_button(browser):
     '''find delete button and click!'''
     log.info(f'finding next button...')
-    ib.stime()
+    ib.random_time()
     next = browser.find_element(by=By.XPATH,
                             value="//button[.='Next']")
     log.info('found next button')                            
@@ -77,18 +77,18 @@ def process_image(browser_object : webdriver, tags : str):
     try:
         log.info('starting process_image')
         find_next_button(browser_object)
-        ib.stime()
+        ib.random_time()
         log.info('looking for next button')
         find_next_button(browser_object)
         add_text = browser_object.find_elements(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption...']")[0]
         log.info('writing caption')
         ActionChains(browser_object).move_to_element(add_text).click().send_keys(tags).perform()
-        ib.stime()
+        ib.random_time()
         log.info('locating share button')
         share_button = browser_object.find_element(by=By.XPATH, value="//button[.='Share']")
         log.info('sharing post')
         ActionChains(browser_object).move_to_element(share_button).click().perform()
-        ib.stime()
+        ib.random_time()
         log.info('post successful!')
         ib.save_cookies(browser_object)
         return True
