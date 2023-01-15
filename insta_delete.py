@@ -4,7 +4,6 @@ import logging
 import sys
 
 from bs4 import BeautifulSoup, SoupStrainer
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
 import insta_base as ib
@@ -100,6 +99,18 @@ def scroll_to_end(browser):
     return browser.page_source
 
 
+def delete_post(browser, url, url_list):
+    log.info(f'finding 3 dot options...')
+    more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[1]
+    ib.stime()
+    ib.click_element(browser, more_options, 'more options')
+    find_delete_button(browser)
+    find_delete_button(browser)
+    url_list.append(url)
+    log.info('POST DELETED: ' + url)
+    return url_list
+
+
 def delete_posts(browser):
         deleted_urls = []
         new_file = open_archive()
@@ -116,14 +127,7 @@ def delete_posts(browser):
                     log.info('URL not found, removing from list')
                     counter -= 1
                 else:                
-                    log.info(f'finding 3 dot options...')
-                    more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[1]
-                    ib.stime()
-                    ib.click_element(browser, more_options, 'more options')
-                    find_delete_button(browser)
-                    find_delete_button(browser)
-                    deleted_urls.append(new_file[counter])
-                    log.info('POST DELETED: '+new_file[counter])
+                    deleted_urls = delete_post(browser, new_file[counter], deleted_urls)
                     counter -= 1
             remaining_urls = [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
