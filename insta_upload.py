@@ -42,16 +42,21 @@ def select_local_file(full_file_path):
     log.info('window explorer tabbed and hit entered to close')
 
 
+def find_new_post(browser):
+    log.info('locating new post option')
+    new_post_option = browser.find_element(by=By.XPATH,
+                        value="//*[local-name()='svg' and @aria-label='New post']")
+    log.info('found new post option')
+    ib.click_element(browser, new_post_option, 'new post option')
+    ib.random_time()
+
+
 def upload_image(browser : webdriver, filepath : str):
     try:
         log.info('finding upload image button')
         ib.random_time()
         browser.file_detector = UselessFileDetector()
-        new_post_option = browser.find_element(by=By.XPATH,
-                            value="//*[local-name()='svg' and @aria-label='New post']")
-        log.info('found new post option')
-        ib.click_element(browser, new_post_option, 'new post option')
-        ib.random_time()
+        find_new_post(browser)
         upload_button = browser.find_element(by=By.XPATH,
                             value="//button[text()='Select from computer']")
         log.info('found select from computer button')
@@ -78,7 +83,6 @@ def process_image(browser_object : webdriver, tags : str):
         log.info('starting process_image')
         find_next_button(browser_object)
         ib.random_time()
-        log.info('looking for next button')
         find_next_button(browser_object)
         add_text = browser_object.find_elements(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption...']")[0]
         log.info('writing caption')
