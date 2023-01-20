@@ -74,7 +74,7 @@ def main():
     driver = ib.login_with_cookies()
     like_multiple_posts(driver, posts_to_like=4)
     ib.save_cookies(driver)
-    driver.close()
+    driver.quit()
 
 
 if __name__ == "__main__":
