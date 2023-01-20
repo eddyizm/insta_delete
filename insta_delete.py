@@ -152,7 +152,7 @@ def main():
     scrape_urls(driver, file_size=os.stat(ib.Settings.log_path).st_size)
     delete_posts(browser=driver)
     ib.save_cookies(driver) 
-    driver.close()
+    driver.quit()
 
 
 if __name__ == '__main__':
