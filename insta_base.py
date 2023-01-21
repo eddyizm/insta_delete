@@ -7,6 +7,7 @@ import sys
 import time
 
 from bs4 import BeautifulSoup
+from config import Settings
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
@@ -15,10 +16,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from random import randrange
-
-from models import Settings
-
-CONFIG = r"C:\Users\eddyizm\HP\config.json"
 
 
 def check_login_status(browser):
@@ -104,25 +101,6 @@ def login_with_cookies() -> webdriver:
     return driver
 
 
-def get_settings() -> Settings:
-    ''' get settings and return populated model '''
-    settings = get_keys()
-    return Settings(settings['instagram']['login'],
-        settings['instagram']['pass'],
-        settings['windows']['log_path'],
-        settings['windows']['app_log'],
-        settings['windows']['firefox_path'],
-        settings['windows']['profile_path'],
-        settings['windows']['image_path']
-        )
-
-
-def get_keys():
-    with open(CONFIG, 'r') as myfile:
-        keys = myfile.read()
-        return json.loads(keys)
-
-
 def check_for_text(search_value: str, browser: webdriver):
     try:
         log.info(f'searching for text: {search_value}')
@@ -165,7 +143,7 @@ def login_to_site(browser) -> webdriver:
         sys.exit(1)
 
 # call settings/functions to use in app
-Settings = get_settings()
+Settings = Settings()
 handlers = [log.FileHandler(Settings.app_log), log.StreamHandler()]
 log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
 BASE_DIR = get_working_directory(__file__)

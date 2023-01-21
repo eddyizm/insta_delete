@@ -45,28 +45,25 @@ Activate virtual environment and install requirements
     source env/Scripts/activate  
     pip install -r requirements.txt
 
-## Usage
+## Config
 
-I updated all the environment specific stuff to a json file and a function to read the file. All I need to pass in is the file location
+~~I updated all the environment specific stuff to a json file and a function to read the file. All I need to pass in is the file location~~
 
-    CONFIG = r"/path/to/file/config.json"
+Swapped in `python-dotenv` to remove the json path and use `.env`
+in your root directory
 
 
-Config file format
+env file. Fill out your settings here. This file does not get checked in. New `config.py` file loads the settings from the environment.
 
-    {
-        "instagram": {
-            "login": "<YOUR_LOGIN",
-            "pass": "<YOUR_PASSWORD>"
-        },
-        "windows": {
-            "image_path": "/path/to/files/images",
-            "log_path" : "/path/to/files/media_urls.txt",
-            "app_log" : "/path/to/files/insta_delete.log",
-            "firefox_path" : "/path/to/files/geckodriver.exe"
-            "profile_path" : "/path/to/AppData/Roaming/Mozilla/Firefox/Profiles/<profile>.default-release"
-        }
-    }
+```
+USERNAME=
+PASSWORD=
+LOG_PATH=
+APP_LOG=
+FIREFOX_PATH=/path_to_driver/env/geckodriver.exe
+PROFILE_PATH=/path_to/AppData/Roaming/Mozilla/Firefox/Profiles/1gzgq8je.default-release
+IMAGE_PATH=
+```
 
 ### Scheduled Task / Cron Tab
 On my windows machine I set up a scheduled task that fires off the script via a batch file set up to activate virtual environment using git bash. 
