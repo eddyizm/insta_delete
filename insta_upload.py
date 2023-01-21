@@ -42,6 +42,14 @@ def select_local_file(full_file_path):
     log.info('window explorer tabbed and hit entered to close')
 
 
+def find_upload_button(browser):
+    upload_button = browser.find_element(by=By.XPATH,
+                        value="//button[text()='Select from computer']")
+    log.info('found select from computer button')
+    ib.click_element(browser, upload_button, 'upload button')
+    ib.random_time()
+    
+
 def find_new_post(browser):
     log.info('locating new post option')
     new_post_option = browser.find_element(by=By.XPATH,
@@ -57,11 +65,7 @@ def upload_image(browser : webdriver, filepath : str):
         ib.random_time()
         browser.file_detector = UselessFileDetector()
         find_new_post(browser)
-        upload_button = browser.find_element(by=By.XPATH,
-                            value="//button[text()='Select from computer']")
-        log.info('found select from computer button')
-        ib.click_element(browser, upload_button, 'upload button')
-        ib.random_time()
+        find_upload_button(browser)
         select_local_file(filepath)
     except Exception as ex:
         browser.quit()
