@@ -55,7 +55,7 @@ def like_post(driver):
         log.info('scrolling into view')
         like_btn.location_once_scrolled_into_view
         log.info(f'is enabled: {like_btn.is_enabled()}')
-        ib.click_element(driver, like_btn)
+        ib.click_element(driver, like_btn, 'like button')
     else:
         log.info('post not liked.')
 
