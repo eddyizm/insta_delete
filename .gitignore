@@ -10,3 +10,4 @@ __pycache__/
 env/
 debug.html
 *.pkl
+.env
