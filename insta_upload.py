@@ -18,11 +18,6 @@ log = logging.getLogger(__name__)
 pyautogui.FAILSAFE = False
 
 
-def check_for_caption():
-    # TODO check for json file in dir
-    pass
-
-
 def get_image(folder : str):
     ''' get a list of image from a folder recursively and randomize before returning one for posting '''
     folders = glob(folder+'/**/*.jpg', recursive=True)
