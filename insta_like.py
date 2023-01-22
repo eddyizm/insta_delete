@@ -26,7 +26,7 @@ def find_like(browser):
     try: 
         log.info('finding like svg element')
         btn = browser.find_elements(by=By.XPATH, value="//button[@class='_abl-']//*[local-name()='svg' and @aria-label='Like']")[1]
-        log.info(f'found btn: {btn}')
+        log.info(f'found like button')
         return btn
     except Exception as ex:
         log.info('like element not found', exc_info=True)
