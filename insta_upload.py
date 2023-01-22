@@ -12,12 +12,18 @@ from sys import exit
 from random import shuffle
 
 import insta_base as ib
+from .caption import get_caption
 
 log = logging.getLogger(__name__)
 pyautogui.FAILSAFE = False
 
 
-def get_images(folder : str):
+def check_for_caption():
+    # TODO check for json file in dir
+    pass
+
+
+def get_image(folder : str):
     ''' get a list of image from a folder recursively and randomize before returning one for posting '''
     folders = glob(folder+'/**/*.jpg', recursive=True)
     shuffle(folders)
@@ -26,8 +32,7 @@ def get_images(folder : str):
         if os.path.isfile(filename):
             fullpath = filename
             break # get first directory if it exists
-    foldertag = f'#{os.path.basename(os.path.dirname(fullpath))} #eddyizm | https://eddyizm.com'
-    return fullpath, foldertag
+    return fullpath
 
 
 def select_local_file(full_file_path):
@@ -110,7 +115,8 @@ def main():
     ib.start_end_log(__file__)
     driver = ib.login_with_cookies()
     try:
-        file, tag = get_images(ib.Settings.image_path)
+        file = get_image(ib.Settings.image_path)
+        tag = get_caption(file)
         upload_image(driver, file)
         if process_image(driver, tag):
             driver.quit()
