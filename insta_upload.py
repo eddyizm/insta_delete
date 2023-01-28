@@ -12,7 +12,7 @@ from sys import exit
 from random import shuffle
 
 import insta_base as ib
-from .caption import get_caption
+import caption
 
 log = logging.getLogger(__name__)
 pyautogui.FAILSAFE = False
@@ -27,7 +27,7 @@ def get_image(folder : str):
         if os.path.isfile(filename):
             fullpath = filename
             break # get first directory if it exists
-    return fullpath
+    return fullpath.replace('/','\\')
 
 
 def select_local_file(full_file_path):
@@ -35,6 +35,7 @@ def select_local_file(full_file_path):
     log.info(f'selecting file on local file system: {full_file_path}')
     pyautogui.write(full_file_path)
     ib.random_time()
+    log.info('tabbing over')
     pyautogui.press('tab')
     pyautogui.press('tab')
     ib.random_time()
@@ -111,7 +112,7 @@ def main():
     driver = ib.login_with_cookies()
     try:
         file = get_image(ib.Settings.image_path)
-        tag = get_caption(file)
+        tag = caption.get_caption(file)
         upload_image(driver, file)
         if process_image(driver, tag):
             driver.quit()
