@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
-import json
 import os
 import pickle
 import logging as log
 import sys
 import time
 
+import pyautogui
 from bs4 import BeautifulSoup
 from config import Settings
 from selenium.webdriver.common.keys import Keys
@@ -18,9 +18,23 @@ from selenium.webdriver.firefox.service import Service
 from random import randrange
 
 
+def screenshot(func_name):
+    '''full screenshot to capture errors when debugging'''
+    image_name = f'data/{func_name}_{str(time.monotonic())}.png'
+    log.info(f'saving screenshot {image_name}')
+    pyautogui.screenshot(image_name)
+
+
 def check_login_status(browser):
     """TODO: Check login in order to use cookies or actually login"""
     pass
+
+
+def dump_html_to_file(driver):
+    ''' used this to debug and find html changes. '''
+    checkhtml = BeautifulSoup(driver.page_source, "html.parser")
+    with open('debug.html', 'w', encoding='utf-8') as w:
+        w.write(checkhtml.prettify())
 
 
 def scroll_home(browser) -> bool:
@@ -64,13 +78,6 @@ def start_end_log(file, end_log=False):
     log.info(f'{prefix} {get_file_name(file)} session -------------------')
 
 
-def dump_html_to_file(driver):
-    ''' used this to debug and find html changes. '''
-    checkhtml = BeautifulSoup(driver.page_source, "html.parser")
-    with open('debug.html', 'w', encoding='utf-8') as w:
-        w.write(checkhtml.prettify())
-
-
 def random_time():
     '''Use this to randomize actions'''
     sleep_time = randrange(5,60)
@@ -95,7 +102,7 @@ def login_with_cookies() -> webdriver:
     driver.get("https://www.instagram.com/")
     if check_for_text('Turn on Notifications', driver):
         not_now_btn = driver.find_element(by=By.XPATH, value="//*[contains(text(), 'Not Now')]")
-        click_element(driver, not_now_btn)
+        click_element(driver, not_now_btn, 'Not Now')
     else:
         driver = login_to_site(driver)
     return driver
