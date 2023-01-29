@@ -83,16 +83,20 @@ def find_next_button(browser):
     ib.click_element(browser, next, 'next')
 
 
+def add_captions(browser, caption):
+    add_text = browser.find_elements(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption...']")[0]
+    log.info('writing caption')
+    ActionChains(browser).move_to_element(add_text).click().send_keys(caption).perform()
+    ib.random_time()
+
+
 def process_image(browser_object : webdriver, tags : str):
     try:
         log.info('starting process_image')
         find_next_button(browser_object)
         ib.random_time()
         find_next_button(browser_object)
-        add_text = browser_object.find_elements(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption...']")[0]
-        log.info('writing caption')
-        ActionChains(browser_object).move_to_element(add_text).click().send_keys(tags).perform()
-        ib.random_time()
+        add_captions(browser=browser_object, caption=tags)
         log.info('locating share button')
         share_button = browser_object.find_element(by=By.XPATH, value="//button[.='Share']")
         log.info('sharing post')
