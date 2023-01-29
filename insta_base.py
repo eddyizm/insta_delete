@@ -33,8 +33,12 @@ def check_login_status(browser):
 def dump_html_to_file(driver):
     ''' used this to debug and find html changes. '''
     checkhtml = BeautifulSoup(driver.page_source, "html.parser")
-    with open('debug.html', 'w', encoding='utf-8') as w:
+    with open('data/debug.html', 'w', encoding='utf-8') as w:
         w.write(checkhtml.prettify())
+
+
+def get_length_of_page(driver):
+    return driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
 
 
 def scroll_home(browser) -> bool:
