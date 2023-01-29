@@ -83,6 +83,15 @@ def find_next_button(browser):
     ib.click_element(browser, next, 'next')
 
 
+def share_image(browser):
+    log.info('locating share button')
+    share_button = browser.find_element(by=By.XPATH, value="//button[.='Share']")
+    log.info('sharing post')
+    ActionChains(browser).move_to_element(share_button).click().perform()
+    ib.random_time()
+    log.info('post successful!')
+
+
 def add_captions(browser, caption):
     add_text = browser.find_elements(by=By.XPATH, value="//*[local-name()='div' and @aria-label='Write a caption...']")[0]
     log.info('writing caption')
@@ -97,12 +106,7 @@ def process_image(browser_object : webdriver, tags : str):
         ib.random_time()
         find_next_button(browser_object)
         add_captions(browser=browser_object, caption=tags)
-        log.info('locating share button')
-        share_button = browser_object.find_element(by=By.XPATH, value="//button[.='Share']")
-        log.info('sharing post')
-        ActionChains(browser_object).move_to_element(share_button).click().perform()
-        ib.random_time()
-        log.info('post successful!')
+        share_image(browser_object)
         ib.save_cookies(browser_object)
         return True
     except Exception as ex:

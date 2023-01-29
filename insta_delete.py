@@ -50,31 +50,22 @@ def find_delete_button(browser):
     ib.click_element(browser, delete, 'delete')
 
 
-def profile_post_min(counter, browser):
-    # TODO this function is currently not working and thus returning True regardless
-    result = False
+def scrape_current_post_count(browser) -> int:
+    log.info('Getting current post count')
+    post_count = -1
     try:
         browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
-        log.info(f'checking post count limit currently set at: {counter}')
-        post_count = ''
         ib.random_time()
-        links = BeautifulSoup(browser.page_source, "html.parser", parse_only=SoupStrainer('a'))
-        for x in links:
-            t = x.get('href')
-            if 'posts' in t:
-                post_count = x.text.replace(' posts','')
-                log.info(f'post count: {post_count}')
-
-        if len(post_count) > 0 and int(post_count.replace(',','')) > counter:
-            result = True
-        else:
-            log.info('count mininum reached.')
-            result = False
+        soup = BeautifulSoup(browser.page_source, "html.parser")
+        spans = soup.body.find('div', attrs={'class': '_aacl _aacp _aacu _aacx _aad6 _aade'})
+        span = spans.find('span')
+        post_count = int(span.text)
+        log.info(f'post count: {post_count}')
+        return post_count
     except ValueError as err:
         log.info('profile_post_min :ERROR:')
         log.info(err)
-    finally:
-        return True
+        return post_count
 
 
 def scroll_to_end(browser):
@@ -157,4 +148,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # ib.start_end_log(__file__)
+    # driver = ib.login_with_cookies()
+    # scrape_current_post_count(driver)
+    # driver.quit()
     ib.start_end_log(__file__, end_log=True)
