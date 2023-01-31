@@ -39,7 +39,7 @@ def parse_href(data):
             t = link.get('href')
             if t is not None:
                 url_list.append(t)
-    return url_list            
+    return url_list
 
 
 def find_delete_button(browser):
@@ -73,7 +73,7 @@ def scroll_loop(browser, length, count = 0, match = False):
     while(match==False):
         last_count = length
         ib.random_time()
-        log.info(f'scrolling {count}...')    
+        log.info(f'scrolling {count}...')
         len_of_page = ib.get_length_of_page(browser)
         count += 1
         # added count to ensure only older images get picked up.
@@ -105,31 +105,48 @@ def delete_post(browser, url, url_list):
     return url_list
 
 
+def delete_loop(browser, counter, urls) -> list:
+    log.info('DELETING POSTS!')
+    deleted_urls = []
+    while (counter > -1):
+        log.info(f'getting new url: {urls[counter]}')
+        browser.get(urls[counter])
+        ib.random_time()
+        if ("Sorry, this page isn't available." in browser.page_source):
+            deleted_urls.append(urls[counter])
+            log.info('URL not found, removing from list')
+            counter -= 1
+        else:
+            deleted_urls = delete_post(browser, urls[counter], deleted_urls)
+            counter -= 1
+    return [x for x in urls if x not in deleted_urls]
+
+
 def delete_posts(browser):
-        deleted_urls = []
+        # deleted_urls = []
         new_file = open_archive()
         counter = (len(new_file) - 1) if (10 >= len(new_file)) else 10
         log.info('number of posts to delete: '+str(counter))
         try:
-            log.info('DELETING POSTS!')
-            while (counter > -1):
-                log.info(f'getting new url: {new_file[counter]}')
-                browser.get(new_file[counter])
-                ib.random_time()
-                if ("Sorry, this page isn't available." in browser.page_source):
-                    deleted_urls.append(new_file[counter])
-                    log.info('URL not found, removing from list')
-                    counter -= 1
-                else:                
-                    deleted_urls = delete_post(browser, new_file[counter], deleted_urls)
-                    counter -= 1
-            remaining_urls = [x for x in new_file if x not in deleted_urls]
+            # log.info('DELETING POSTS!')
+            # while (counter > -1):
+            #     log.info(f'getting new url: {new_file[counter]}')
+            #     browser.get(new_file[counter])
+            #     ib.random_time()
+            #     if ("Sorry, this page isn't available." in browser.page_source):
+            #         deleted_urls.append(new_file[counter])
+            #         log.info('URL not found, removing from list')
+            #         counter -= 1
+            #     else:
+            #         deleted_urls = delete_post(browser, new_file[counter], deleted_urls)
+            #         counter -= 1
+            remaining_urls = delete_loop(browser, counter, new_file) # [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
-            write_to_archive(ib.Settings.log_path, remaining_urls)	    
+            write_to_archive(ib.Settings.log_path, remaining_urls)
         except Exception as err:
             log.info('Errog deleting posts!', exc_info=True)
             sys.exit(1)
-    
+
 
 def scrape_urls(driver, file_size):
     """scrape for new url's to delete if current list is empty"""
@@ -137,7 +154,7 @@ def scrape_urls(driver, file_size):
         log.info('file empty, going to scroll')
         source_data = scroll_to_end(browser=driver)
         URLS = parse_href(source_data)
-        write_to_archive(ib.Settings.log_path, URLS)    
+        write_to_archive(ib.Settings.log_path, URLS)
 
 
 def main():
@@ -145,7 +162,7 @@ def main():
     driver = ib.login_with_cookies()
     scrape_urls(driver, file_size=os.stat(ib.Settings.log_path).st_size)
     delete_posts(browser=driver)
-    ib.save_cookies(driver) 
+    ib.save_cookies(driver)
     driver.quit()
 
 
