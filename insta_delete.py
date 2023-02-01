@@ -123,23 +123,10 @@ def delete_loop(browser, counter, urls) -> list:
 
 
 def delete_posts(browser):
-        # deleted_urls = []
         new_file = open_archive()
         counter = (len(new_file) - 1) if (10 >= len(new_file)) else 10
         log.info('number of posts to delete: '+str(counter))
         try:
-            # log.info('DELETING POSTS!')
-            # while (counter > -1):
-            #     log.info(f'getting new url: {new_file[counter]}')
-            #     browser.get(new_file[counter])
-            #     ib.random_time()
-            #     if ("Sorry, this page isn't available." in browser.page_source):
-            #         deleted_urls.append(new_file[counter])
-            #         log.info('URL not found, removing from list')
-            #         counter -= 1
-            #     else:
-            #         deleted_urls = delete_post(browser, new_file[counter], deleted_urls)
-            #         counter -= 1
             remaining_urls = delete_loop(browser, counter, new_file) # [x for x in new_file if x not in deleted_urls]
             log.info('while loop done and exited successfully')
             write_to_archive(ib.Settings.log_path, remaining_urls)
