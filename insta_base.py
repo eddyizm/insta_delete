@@ -8,7 +8,6 @@ import time
 import pyautogui
 from bs4 import BeautifulSoup
 from config import Settings
-from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import MoveTargetOutOfBoundsException
@@ -39,21 +38,6 @@ def dump_html_to_file(driver):
 
 def get_length_of_page(driver):
     return driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
-
-
-def scroll_home(browser) -> bool:
-    try:
-        log.info('scrolling home')
-        ActionChains(browser).key_down(Keys.CONTROL).send_keys(Keys.HOME).key_up(Keys.CONTROL).perform()
-        return True
-    except:
-        log.info('error scrolling home', exc_info=True)
-        return False
-
-
-def scroll(browser) -> webdriver:
-    log.info('scrolling full page')
-    return browser.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
 
 
 def load_cookies(browser):
@@ -131,14 +115,19 @@ def get_driver() -> webdriver:
     return browser
 
 
+def get_username(driver):
+    user_element = driver.find_element(by=By.XPATH, value="//input[@name='username']")
+    log.info(f'found username element: {user_element}')
+    ActionChains(driver).move_to_element(user_element). \
+        click().send_keys(Settings.insta_username).perform()
+    random_time()
+
+
 def login_to_site(browser) -> webdriver:
     try:
         log.info('logging in')
         browser.get("https://www.instagram.com/accounts/login/")
-        eUser = browser.find_element(by=By.XPATH, value="//input[@name='username']")
-        log.info(f'found username element: {eUser}')
-        ActionChains(browser).move_to_element(eUser). \
-            click().send_keys(Settings.insta_username).perform()
+        get_username(browser)
         ePass = browser.find_element(by=By.XPATH, value="//input[@name='password']")
         log.info(f'found password element: {ePass}')
         ActionChains(browser).move_to_element(ePass). \
