@@ -17,6 +17,17 @@ from selenium.webdriver.firefox.service import Service
 from random import randrange
 
 
+def close_shop(driver):
+    # PID = driver.service.process.pid
+    try:
+        log.info('closing shop...')
+        driver.close()
+        driver.quit()
+        driver = None
+    except OSError:
+        log.exception(OSError.with_traceback())
+
+
 def screenshot(func_name):
     '''full screenshot to capture errors when debugging'''
     image_name = f'data/{func_name}_{str(time.monotonic())}.png'
@@ -115,6 +126,14 @@ def get_driver() -> webdriver:
     return browser
 
 
+def get_password(driver):
+    pass_element = driver.find_element(by=By.XPATH, value="//input[@name='password']")
+    log.info(f'found password element: {pass_element}')
+    ActionChains(driver).move_to_element(pass_element). \
+            click().send_keys(Settings.insta_password).perform()
+    random_time()
+
+
 def get_username(driver):
     user_element = driver.find_element(by=By.XPATH, value="//input[@name='username']")
     log.info(f'found username element: {user_element}')
@@ -128,10 +147,7 @@ def login_to_site(browser) -> webdriver:
         log.info('logging in')
         browser.get("https://www.instagram.com/accounts/login/")
         get_username(browser)
-        ePass = browser.find_element(by=By.XPATH, value="//input[@name='password']")
-        log.info(f'found password element: {ePass}')
-        ActionChains(browser).move_to_element(ePass). \
-            click().send_keys(Settings.insta_password).perform()
+        get_password(browser)
         login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
         log.info(f'found login element: {login_button}')
         ActionChains(browser).move_to_element(login_button).click().perform()
@@ -141,6 +157,7 @@ def login_to_site(browser) -> webdriver:
     except Exception as err:
         log.info('Errog logging in to site', exc_info=True)
         sys.exit(1)
+
 
 # call settings/functions to use in app
 Settings = Settings()
