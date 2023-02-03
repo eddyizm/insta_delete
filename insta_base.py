@@ -142,16 +142,21 @@ def get_username(driver):
     random_time()
 
 
+def click_login(browser):
+    login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
+    log.info(f'found login element: {login_button}')
+    ActionChains(browser).move_to_element(login_button).click().perform()
+    log.info('login successful...')
+    random_time()
+
+
 def login_to_site(browser) -> webdriver:
     try:
         log.info('logging in')
         browser.get("https://www.instagram.com/accounts/login/")
         get_username(browser)
         get_password(browser)
-        login_button = browser.find_element(by=By.XPATH, value="//*[contains(text(), 'Log in')]")
-        log.info(f'found login element: {login_button}')
-        ActionChains(browser).move_to_element(login_button).click().perform()
-        log.info('login successful...')
+        click_login(browser)
         save_cookies(browser)
         return browser
     except Exception as err:
