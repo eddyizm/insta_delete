@@ -123,7 +123,7 @@ def main():
         tag = caption.get_caption(file)
         upload_image(driver, file)
         if process_image(driver, tag):
-            driver.quit()
+            ib.close_shop(driver)
             os.remove(file)
             log.info(f'file posted successfully and deleted: {file}')
     except Exception as ex:
