@@ -100,7 +100,7 @@ def login_with_cookies() -> webdriver:
     load_cookies(driver)
     driver.get("https://www.instagram.com/")
     if check_for_text('Turn on Notifications', driver):
-        not_now_btn = driver.find_element(by=By.XPATH, value="//*[contains(text(), 'Not Now')]")
+        not_now_btn = check_for_text('Not Now', driver)
         click_element(driver, not_now_btn, 'Not Now')
     else:
         driver = login_to_site(driver)
@@ -110,8 +110,11 @@ def login_with_cookies() -> webdriver:
 def check_for_text(search_value: str, browser: webdriver):
     try:
         log.info(f'searching for text: {search_value}')
-        return search_value.lower() in browser.page_source.lower()
+        ele = browser.find_element(by=By.XPATH, value="//*[contains(text(), '{}')]".format(search_value))
+        log.info('text found, returning element')
+        return ele
     except Exception as ex:
+        log.exception('Error checking for text', exc_info=True)
         return None
         
 
@@ -161,6 +164,7 @@ def login_to_site(browser) -> webdriver:
         return browser
     except Exception as err:
         log.info('Errog logging in to site', exc_info=True)
+        screenshot('login_to_site')
         sys.exit(1)
 
 
