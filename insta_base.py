@@ -172,7 +172,6 @@ def login_to_site(browser) -> webdriver:
 # call settings/functions to use in app
 Settings = Settings()
 handlers = [
-    log.FileHandler(Settings.app_log),
     log.StreamHandler(),
     RotatingFileHandler(Settings.app_log, 
         mode='a', maxBytes=5*1024*1024, 
