@@ -8,6 +8,7 @@ import time
 import pyautogui
 from bs4 import BeautifulSoup
 from config import Settings
+from logging.handlers import RotatingFileHandler
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import MoveTargetOutOfBoundsException
@@ -170,7 +171,14 @@ def login_to_site(browser) -> webdriver:
 
 # call settings/functions to use in app
 Settings = Settings()
-handlers = [log.FileHandler(Settings.app_log), log.StreamHandler()]
+handlers = [
+    log.FileHandler(Settings.app_log),
+    log.StreamHandler(),
+    RotatingFileHandler(Settings.app_log, 
+        mode='a', maxBytes=5*1024*1024, 
+        backupCount=5, encoding=None, delay=0
+    )
+]
 log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
 BASE_DIR = get_working_directory(__file__)
 COOKIES = os.path.join(BASE_DIR, 'data/cookies.pkl')

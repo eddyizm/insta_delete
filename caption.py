@@ -1,6 +1,9 @@
 import json
 import os
 from collections import namedtuple
+import logging
+
+log = logging.getLogger(__name__)
 
 
 def caption_decode(caption_dict):
@@ -15,10 +18,10 @@ def read_caption(file):
 
 def check_for_caption(filepath):
     '''check if folder has json info'''
-    print('checking for json file')
+    log.info('checking for caption file')
     base_dir = os.path.dirname(filepath)
     if os.path.exists(os.path.join(base_dir, 'caption.json')):
-        print(f'caption file found, returning {os.path.join(base_dir, "caption.json")}')
+        log.info(f'caption file found, returning {os.path.join(base_dir, "caption.json")}')
         return os.path.join(base_dir, 'caption.json')
     return None
 
