@@ -68,16 +68,17 @@ def scrape_current_post_count(browser) -> int:
         return post_count
 
 
-def scroll_loop(browser, length, count = 0, match = False):
+def scroll_loop(browser, count = 0, match = False):
     # TODO add date posted scraping along with post count.
     while(match==False):
-        last_count = length
         ib.random_time()
         log.info(f'scrolling {count}...')
-        len_of_page = ib.get_length_of_page(browser)
+        ib.get_length_of_page(browser) # scrolling!
+        # this len of page was no causing this loop to never complete.
+        # need to come back to this as it was used originally
         count += 1
         # added count to ensure only older images get picked up.
-        if (last_count==len_of_page) and (count > 25):
+        if count > 25:
             match=True
     log.info('scrolled down: '+str(count)+' times!')
 
@@ -86,8 +87,8 @@ def scroll_to_end(browser):
     log.info('scrolling profile to get more urls')
     try:
         browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
-        len_of_page = ib.get_length_of_page(browser)
-        scroll_loop(browser, len_of_page)
+        # len_of_page = ib.get_length_of_page(browser)
+        scroll_loop(browser)
     except Exception as err:
         log.info('error scrolling to end', exc_info=True)
     return browser.page_source
