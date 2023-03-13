@@ -19,9 +19,10 @@ from random import randrange
 
 
 def close_shop(driver):
-    # PID = driver.service.process.pid
+    PID = driver.service.process.pid
     try:
         log.info('closing shop...')
+        log.info(f'firefox PID: {PID}')
         driver.close()
         driver.quit()
         driver = None
