@@ -78,7 +78,7 @@ def find_next_button(browser):
     log.info(f'finding next button...')
     ib.random_time()
     next = browser.find_element(by=By.XPATH,
-                            value="//button[.='Next']")
+                                value="//div[@role='button' and text()='Next']")
     log.info('found next button')                            
     ib.click_element(browser, next, 'next')
 
@@ -110,6 +110,7 @@ def process_image(browser_object : webdriver, tags : str):
         ib.save_cookies(browser_object)
         return True
     except Exception as ex:
+        ib.screenshot('process_image')
         log.error('error in process_image():',  exc_info=True)
         browser_object.quit()
         return False
