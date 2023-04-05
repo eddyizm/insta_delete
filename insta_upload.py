@@ -85,7 +85,7 @@ def find_next_button(browser):
 
 def share_image(browser):
     log.info('locating share button')
-    share_button = browser.find_element(by=By.XPATH, value="//button[.='Share']")
+    share_button = browser.find_element(by=By.XPATH, value="//div[@role='button' and text()='Share']")
     log.info('sharing post')
     ActionChains(browser).move_to_element(share_button).click().perform()
     ib.random_time()
