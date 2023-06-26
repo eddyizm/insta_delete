@@ -96,15 +96,20 @@ def click_element(browser, elem, elem_name=None):
         log.info('Error click_element', exc_info=True)
         
 
+def bypass_notification_prompt(driver) -> bool:
+    if check_for_text('Turn On', driver):
+        not_now_btn = check_for_text('Not Now', driver)
+        click_element(driver, not_now_btn, 'Not Now')
+        return True
+    return False
+
+
 def login_with_cookies() -> webdriver:
     driver = get_driver()
     driver.get("https://www.instagram.com/")
     load_cookies(driver)
     driver.get("https://www.instagram.com/")
-    if check_for_text('Turn On', driver):
-        not_now_btn = check_for_text('Not Now', driver)
-        click_element(driver, not_now_btn, 'Not Now')
-    else:
+    if not bypass_notification_prompt(driver):
         driver = login_to_site(driver)
     return driver
 
