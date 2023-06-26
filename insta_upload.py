@@ -65,6 +65,7 @@ def upload_image(browser : webdriver, filepath : str):
         log.info('finding upload image button')
         ib.random_time()
         browser.file_detector = UselessFileDetector()
+        ib.bypass_notification_prompt(browser)
         find_new_post(browser)
         find_upload_button(browser)
         select_local_file(filepath)
