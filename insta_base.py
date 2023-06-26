@@ -101,7 +101,7 @@ def login_with_cookies() -> webdriver:
     driver.get("https://www.instagram.com/")
     load_cookies(driver)
     driver.get("https://www.instagram.com/")
-    if check_for_text('Turn on Notifications', driver):
+    if check_for_text('Turn On', driver):
         not_now_btn = check_for_text('Not Now', driver)
         click_element(driver, not_now_btn, 'Not Now')
     else:
