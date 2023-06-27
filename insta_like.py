@@ -25,7 +25,7 @@ def find_likes(browser):
 def find_like(browser):
     try: 
         log.info('finding like svg element')
-        btn = browser.find_elements(by=By.XPATH, value="//button[@class='_abl-']//*[local-name()='svg' and @aria-label='Like']")[1]
+        btn = browser.find_elements(by=By.XPATH, value="//button[@class='x6s0dn4 x78zum5 xdt5ytf xl56j7k']//*[local-name()='svg' and @aria-label='Like']")[1]
         log.info(f'found like button')
         return btn
     except Exception as ex:
@@ -73,6 +73,7 @@ def main():
     ib.start_end_log(__file__)
     driver = ib.login_with_cookies()
     like_multiple_posts(driver, posts_to_like=4)
+    breakpoint()
     ib.save_cookies(driver)
     ib.close_shop(driver)
 
