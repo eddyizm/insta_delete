@@ -49,6 +49,7 @@ def inspect_cookies():
 
 
 def like_post(driver):
+    ib.bypass_notification_prompt(driver)
     like_btn = find_like(driver)
     if like_btn and like_btn.is_displayed():
         log.info(f'is like btn displayed? : {like_btn.is_displayed()}')
@@ -73,7 +74,6 @@ def main():
     ib.start_end_log(__file__)
     driver = ib.login_with_cookies()
     like_multiple_posts(driver, posts_to_like=4)
-    breakpoint()
     ib.save_cookies(driver)
     ib.close_shop(driver)
 
