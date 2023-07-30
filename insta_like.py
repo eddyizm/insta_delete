@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 def find_likes(browser):
     try: 
         log.info('finding like svg element')
-        btn = browser.find_elements(by=By.XPATH, value="//button[@class='_abl-']//*[local-name()='svg' and @aria-label='Like']")
+        btn = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='Like']")
         log.info(f'found {len(btn)} btns')
         return btn
     except Exception as ex:
@@ -25,7 +25,7 @@ def find_likes(browser):
 def find_like(browser):
     try: 
         log.info('finding like svg element')
-        btn = browser.find_elements(by=By.XPATH, value="//button[@class='x6s0dn4 x78zum5 xdt5ytf xl56j7k']//*[local-name()='svg' and @aria-label='Like']")[1]
+        btn = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='Like']")[0]
         log.info(f'found like button')
         return btn
     except Exception as ex:
