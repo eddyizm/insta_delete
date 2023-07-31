@@ -96,7 +96,7 @@ def scroll_to_end(browser):
 
 def delete_post(browser, url, url_list):
     log.info(f'finding 3 dot options...')
-    more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[1]
+    more_options = browser.find_elements(by=By.XPATH, value="//*[local-name()='svg' and @aria-label='More options']")[0]
     ib.random_time()
     ib.click_element(browser, more_options, 'more options')
     find_delete_button(browser)
