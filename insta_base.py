@@ -97,12 +97,15 @@ def click_element(browser, elem, elem_name=None):
         
 
 def bypass_notification_prompt(driver) -> bool:
+    if Settings.BYPASS_NOTIFICATION_CHECKED:
+        return True
     try: 
         log.info('checking for notification prompt')
         if check_for_text('Turn On', driver):
             log.info('turn on modal detected, attemping to bypass')
             not_now_btn = check_for_text('Not Now', driver)
             click_element(driver, not_now_btn, 'Not Now')
+            Settings.BYPASS_NOTIFICATION_CHECKED = True
             return True
     except:
         log.info('prompt not found, swallowing error and continue')

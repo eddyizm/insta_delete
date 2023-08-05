@@ -14,3 +14,4 @@ class Settings:
         self.firefox_path = os.getenv('FIREFOX_PATH')
         self.profile_path = os.getenv('PROFILE_PATH')
         self.image_path = os.getenv('IMAGE_PATH')
+        self.BYPASS_NOTIFICATION_CHECKED = False

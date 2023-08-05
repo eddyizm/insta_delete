@@ -10,7 +10,6 @@ import insta_delete as id
 
 log = logging.getLogger(__name__)
 
-
 def find_likes(browser):
     try: 
         log.info('finding like svg element')
