@@ -11,3 +11,4 @@ env/
 debug.html
 *.pkl
 .env
+data/*.png
