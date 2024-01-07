@@ -84,6 +84,20 @@ def find_next_button(browser):
     ib.click_element(browser, next, 'next')
 
 
+def select_original_crop(browser):
+    '''resizing image using select crop button to original'''
+    log.info('finding select crop button...')
+    ib.random_time()
+    crop_button = browser.find_element(by=By.XPATH,
+                                value="//*[local-name()='svg' and @aria-label='Select crop']")
+    log.info('found select crop button')                            
+    ib.click_element(browser, crop_button, 'crop_button')
+    original = browser.find_element(by=By.XPATH,
+                                value="//*[local-name()='div' and @role='button' and contains(.//span, 'Original')]")
+    log.info('found select original button')
+    ib.click_element(browser, original, 'original')
+
+
 def share_image(browser):
     log.info('locating share button')
     share_button = browser.find_element(by=By.XPATH, value="//div[@role='button' and text()='Share']")
@@ -103,11 +117,12 @@ def add_captions(browser, caption):
 def process_image(browser_object : webdriver, tags : str):
     try:
         log.info('starting process_image')
+        select_original_crop(browser_object)
         find_next_button(browser_object)
         ib.random_time()
         find_next_button(browser_object)
         add_captions(browser=browser_object, caption=tags)
-        share_image(browser_object)
+        # share_image(browser_object)
         ib.save_cookies(browser_object)
         return True
     except Exception as ex:
