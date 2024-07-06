@@ -3,7 +3,7 @@ async-generator==1.10
 attrs==22.1.0
 beautifulsoup4==4.11.1
 bs4==0.0.1
-certifi==2023.7.22
+certifi==2024.7.4
 cffi==1.15.1
 colorama==0.3.9
 h11==0.13.0
