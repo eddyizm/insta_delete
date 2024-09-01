@@ -18,16 +18,16 @@ log = logging.getLogger(__name__)
 pyautogui.FAILSAFE = False
 
 
-def get_image(folder : str):
+def get_image(folder: str):
     ''' get a list of image from a folder recursively and randomize before returning one for posting '''
-    folders = glob(folder+'/**/*.jpg', recursive=True)
+    folders = glob(folder + '/**/*.jpg', recursive=True)
     shuffle(folders)
     fullpath = ''
     for filename in folders:
         if os.path.isfile(filename):
             fullpath = filename
-            break # get first directory if it exists
-    return fullpath.replace('/','\\')
+            break  # get first directory if it exists
+    return fullpath.replace('/', '\\')
 
 
 def select_local_file(full_file_path):
@@ -44,23 +44,34 @@ def select_local_file(full_file_path):
 
 
 def find_upload_button(browser):
-    upload_button = browser.find_element(by=By.XPATH,
-                        value="//button[text()='Select from computer']")
+    upload_button = browser.find_element(
+        by=By.XPATH,
+        value="//button[text()='Select from computer']"
+    )
     log.info('found select from computer button')
     ib.click_element(browser, upload_button, 'upload button')
     ib.random_time()
-    
+
 
 def find_new_post(browser):
     log.info('locating new post option')
-    new_post_option = browser.find_element(by=By.XPATH,
-                        value="//*[local-name()='svg' and @aria-label='New post']")
+    new_post_option = browser.find_element(
+        by=By.XPATH,
+        value="//*[local-name()='svg' and @aria-label='New post']"
+    )
     log.info('found new post option')
     ib.click_element(browser, new_post_option, 'new post option')
     ib.random_time()
+    new_post_option = browser.find_element(
+        by=By.XPATH,
+        value="//span[contains(text(), 'Post')]"
+    )
+    log.info('second post option')
+    ib.click_element(browser, new_post_option, 'second post option')
+    ib.random_time()
 
 
-def upload_image(browser : webdriver, filepath : str):
+def upload_image(browser: webdriver, filepath: str):
     try:
         log.info('finding upload image button')
         ib.random_time()
@@ -76,7 +87,7 @@ def upload_image(browser : webdriver, filepath : str):
 
 def find_next_button(browser):
     '''find delete button and click!'''
-    log.info(f'finding next button...')
+    log.info('finding next button...')
     ib.random_time()
     next = browser.find_element(by=By.XPATH,
                                 value="//div[@role='button' and text()='Next']")
@@ -88,13 +99,17 @@ def select_original_crop(browser):
     '''resizing image using select crop button to original'''
     log.info('finding select crop button...')
     ib.random_time()
-    crop_button = browser.find_element(by=By.XPATH,
-                                value="//*[local-name()='svg' and @aria-label='Select crop']")
-    log.info('found select crop button')                            
+    crop_button = browser.find_element(
+        by=By.XPATH,
+        value="//*[local-name()='svg' and @aria-label='Select crop']"
+    )
+    log.info('found select crop button')   
     ib.click_element(browser, crop_button, 'crop_button')
     ib.random_time()
-    original = browser.find_element(by=By.XPATH,
-                                value="//*[local-name()='div' and @role='button' and contains(.//span, 'Original')]")
+    original = browser.find_element(
+        by=By.XPATH,
+        value="//span[contains(text(), 'Original')]"
+    )
     log.info('found select original button')
     ib.click_element(browser, original, 'original')
 
@@ -115,7 +130,7 @@ def add_captions(browser, caption):
     ib.random_time()
 
 
-def process_image(browser_object : webdriver, tags : str):
+def process_image(browser_object: webdriver, tags: str):
     try:
         log.info('starting process_image')
         select_original_crop(browser_object)
@@ -128,7 +143,7 @@ def process_image(browser_object : webdriver, tags : str):
         return True
     except Exception as ex:
         ib.screenshot('process_image')
-        log.error('error in process_image():',  exc_info=True)
+        log.error('error in process_image():', exc_info=True)
         browser_object.quit()
         return False
 
