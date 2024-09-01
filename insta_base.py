@@ -18,6 +18,10 @@ from selenium.webdriver.firefox.service import Service
 from random import randrange
 
 
+class PromptNotFoundException(Exception):
+    pass
+
+
 def close_shop(driver):
     PID = driver.service.process.pid
     try:
@@ -61,7 +65,7 @@ def load_cookies(browser):
 
 def save_cookies(browser):
     log.info('saving cookies')
-    pickle.dump( browser.get_cookies() , open(COOKIES,"wb"))
+    pickle.dump( browser.get_cookies(), open(COOKIES, "wb"))
 
 
 def get_file_name(_file):
@@ -79,7 +83,7 @@ def start_end_log(file, end_log=False):
 
 def random_time():
     '''Use this to randomize actions'''
-    sleep_time = randrange(5,60)
+    sleep_time = randrange(5, 60)
     log.info(f'sleeping for {sleep_time} seconds...')
     return time.sleep(sleep_time)
 
@@ -92,12 +96,12 @@ def click_element(browser, elem, elem_name=None):
         log.info(f'{_name} clicked successfully!')
     except MoveTargetOutOfBoundsException:
         log.info('Error click_element', exc_info=True)
-        
+
 
 def bypass_notification_prompt(driver) -> bool:
     if Settings.BYPASS_NOTIFICATION_CHECKED:
         return True
-    try: 
+    try:
         log.info('checking for notification prompt')
         if check_for_text('Turn On', driver):
             log.info('turn on modal detected, attemping to bypass')
@@ -105,7 +109,7 @@ def bypass_notification_prompt(driver) -> bool:
             click_element(driver, not_now_btn, 'Not Now')
             Settings.BYPASS_NOTIFICATION_CHECKED = True
             return True
-    except:
+    except PromptNotFoundException:
         log.info('prompt not found, swallowing error and continue')
         return False
 
@@ -129,15 +133,15 @@ def check_for_text(search_value: str, browser: webdriver):
     except Exception as ex:
         log.exception('Error checking for text', exc_info=True)
         return None
-        
 
-def get_driver() -> webdriver:        
+
+def get_driver() -> webdriver:
     log.info('getting webdriver')
-    options=Options()
+    options = Options()
     options.set_preference('profile', Settings.profile_path)
     service = Service(Settings.firefox_path)
     browser = webdriver.Firefox(service=service, options=options)
-    browser.set_window_size(1200,800)
+    browser.set_window_size(1200, 800)
     browser.implicitly_wait(15)
     return browser
 
@@ -146,7 +150,7 @@ def get_password(driver):
     pass_element = driver.find_element(by=By.XPATH, value="//input[@name='password']")
     log.info(f'found password element: {pass_element}')
     ActionChains(driver).move_to_element(pass_element). \
-            click().send_keys(Settings.insta_password).perform()
+        click().send_keys(Settings.insta_password).perform()
     random_time()
 
 
@@ -185,11 +189,12 @@ def login_to_site(browser) -> webdriver:
 Settings = Settings()
 handlers = [
     log.StreamHandler(),
-    RotatingFileHandler(Settings.app_log, 
-        mode='a', maxBytes=5*1024*1024, 
+    RotatingFileHandler(
+        Settings.app_log,
+        mode='a', maxBytes=5 * 1024 * 1024,
         backupCount=5, encoding=None, delay=0
     )
 ]
-log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers = handlers, level=log.INFO)
+log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers=handlers, level=log.INFO)
 BASE_DIR = get_working_directory(__file__)
 COOKIES = os.path.join(BASE_DIR, 'data/cookies.pkl')
