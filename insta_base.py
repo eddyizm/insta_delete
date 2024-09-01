@@ -32,9 +32,7 @@ def close_shop(driver):
 
 def screenshot(func_name):
     '''full screenshot to capture errors when debugging'''
-    image_name = f'data/{func_name}_{str(time.monotonic())}.png'
-    log.info(f'saving screenshot {image_name}')
-    pyautogui.screenshot(image_name)
+    pass
 
 
 def check_login_status(browser):
