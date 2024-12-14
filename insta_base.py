@@ -2,6 +2,7 @@
 import os
 import pickle
 import logging as log
+import signal
 import sys
 import time
 
@@ -30,13 +31,9 @@ def close_shop(driver):
         driver.close()
         driver.quit()
         driver = None
+        os.kill(int(PID), signal.SIGKILL)
     except OSError:
         log.exception(OSError.with_traceback())
-
-
-def screenshot(func_name):
-    '''full screenshot to capture errors when debugging'''
-    pass
 
 
 def check_login_status(browser):
@@ -125,14 +122,15 @@ def login_with_cookies() -> webdriver:
 
 
 def check_for_text(search_value: str, browser: webdriver):
+    ele = None
     try:
         log.info(f'searching for text: {search_value}')
         ele = browser.find_element(by=By.XPATH, value="//*[contains(text(), '{}')]".format(search_value))
         log.info(f'text "{search_value}" found, returning element')
-        return ele
     except Exception as ex:
-        log.exception('Error checking for text', exc_info=True)
-        return None
+        log.error(f'Error checking for text: {ex}', exc_info=True)
+    finally:
+        return ele
 
 
 def get_driver() -> webdriver:
@@ -180,8 +178,7 @@ def login_to_site(browser) -> webdriver:
         save_cookies(browser)
         return browser
     except Exception as err:
-        log.info('Errog logging in to site', exc_info=True)
-        screenshot('login_to_site')
+        log.info(f'Error logging in to site: {err}', exc_info=True)
         sys.exit(1)
 
 
