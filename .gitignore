@@ -12,3 +12,4 @@ debug.html
 *.pkl
 .env
 data/*.png
+data/insta_delete.*log*
