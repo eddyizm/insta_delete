@@ -56,6 +56,7 @@ def load_cookies(browser):
     cookies = pickle.load(open(COOKIES, "rb"))
     log.info('loading cookies')
     for cookie in cookies:
+        log.info(cookie)
         browser.add_cookie(cookie)
     return browser
 
@@ -96,8 +97,9 @@ def click_element(browser, elem, elem_name=None):
 
 
 def bypass_notification_prompt(driver) -> bool:
+    result = True
     if Settings.BYPASS_NOTIFICATION_CHECKED:
-        return True
+        return result
     try:
         log.info('checking for notification prompt')
         if check_for_text('Turn On', driver):
@@ -105,16 +107,18 @@ def bypass_notification_prompt(driver) -> bool:
             not_now_btn = check_for_text('Not Now', driver)
             click_element(driver, not_now_btn, 'Not Now')
             Settings.BYPASS_NOTIFICATION_CHECKED = True
-            return True
     except PromptNotFoundException:
         log.info('prompt not found, swallowing error and continue')
-        return False
+        result = False
+    finally:
+        return result
 
 
 def login_with_cookies() -> webdriver:
     driver = get_driver()
     driver.get("https://www.instagram.com/")
     load_cookies(driver)
+    dump_html_to_file(driver)
     driver.get("https://www.instagram.com/")
     if not bypass_notification_prompt(driver):
         driver = login_to_site(driver)
