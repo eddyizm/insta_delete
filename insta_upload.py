@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 ''' writing a script to automate photo uploads '''
 import os
-import pyautogui
 import logging
 from glob import glob
 from selenium import webdriver
@@ -15,7 +14,6 @@ import insta_base as ib
 import caption
 
 log = logging.getLogger(__name__)
-pyautogui.FAILSAFE = False
 
 
 def get_image(folder: str):
@@ -30,17 +28,39 @@ def get_image(folder: str):
     return fullpath.replace('/', '\\')
 
 
-def select_local_file(full_file_path):
-    """pyautogui actions to select file and close pop up"""
+def select_local_file(full_file_path, osname):
+    
     log.info(f'selecting file on local file system: {full_file_path}')
-    pyautogui.write(full_file_path)
-    ib.random_time()
-    log.info('tabbing over')
-    pyautogui.press('tab')
-    pyautogui.press('tab')
-    ib.random_time()
-    pyautogui.press('enter')
-    log.info('window explorer tabbed and hit entered to close')
+    if osname == 'DARWIN':
+        import pyobjc.applescript
+        """Uses AppleScript to open the file selection dialog and simulate choosing the file"""
+        log.info(f'selecting file on local file system: {full_file_path}')
+        
+        # Construct AppleScript code
+        script = f"""tell application "Finder"
+            activate
+            set theFile to POSIX file "{full_file_path}" as alias
+            open selection of theFile
+        end tell"""
+        # Run the AppleScript
+        try:
+            ascript = pyobjc.applescript.NSAppleScript(source=script)
+            ascript.run()
+            log.info('File selection dialog opened.')
+        except Exception as e:
+            log.error(f'Error running AppleScript: {e}')
+    else:
+        """pyautogui actions to select file and close pop up"""
+        import pyautogui
+        pyautogui.FAILSAFE = False
+        pyautogui.write(full_file_path)
+        ib.random_time()
+        log.info('tabbing over')
+        pyautogui.press('tab')
+        pyautogui.press('tab')
+        ib.random_time()
+        pyautogui.press('enter')
+        log.info('window explorer tabbed and hit entered to close')
 
 
 def find_upload_button(browser):
@@ -71,7 +91,7 @@ def find_new_post(browser):
     ib.random_time()
 
 
-def upload_image(browser: webdriver, filepath: str):
+def upload_image(browser: webdriver, filepath: str, osname: str):
     try:
         log.info('finding upload image button')
         ib.random_time()
@@ -79,7 +99,7 @@ def upload_image(browser: webdriver, filepath: str):
         ib.bypass_notification_prompt(browser)
         find_new_post(browser)
         find_upload_button(browser)
-        select_local_file(filepath)
+        select_local_file(filepath, osname)
     except Exception as ex:
         browser.quit()
         log.error('error in upload_image():', exc_info=True)
@@ -142,7 +162,6 @@ def process_image(browser_object: webdriver, tags: str):
         ib.save_cookies(browser_object)
         return True
     except Exception as ex:
-        ib.screenshot('process_image')
         log.error('error in process_image():', exc_info=True)
         browser_object.quit()
         return False
@@ -154,7 +173,7 @@ def main():
     try:
         file = get_image(ib.Settings.image_path)
         tag = caption.get_caption(file)
-        upload_image(driver, file)
+        upload_image(driver, file, ib.Settings.osname)
         if process_image(driver, tag):
             ib.close_shop(driver)
             os.remove(file)

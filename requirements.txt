@@ -34,3 +34,5 @@ trio-websocket==0.9.2
 urllib3==1.26.19
 wrapt==1.10.11
 wsproto==1.1.0
+# if running on macos
+pyobjc==10.3.1

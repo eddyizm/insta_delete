@@ -63,6 +63,7 @@ APP_LOG=
 FIREFOX_PATH=/path_to_driver/env/geckodriver.exe
 PROFILE_PATH=/path_to/AppData/Roaming/Mozilla/Firefox/Profiles/1gzgq8je.default-release
 IMAGE_PATH=
+OS=
 ```
 
 ### Scheduled Task / Cron Tab
