@@ -29,7 +29,6 @@ def get_image(folder: str):
 
 
 def select_local_file(full_file_path, osname):
-    
     log.info(f'selecting file on local file system: {full_file_path}')
     if osname == 'DARWIN':
         import pyobjc.applescript

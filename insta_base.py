@@ -2,7 +2,6 @@
 import os
 import pickle
 import logging as log
-import signal
 import sys
 import time
 
@@ -24,6 +23,7 @@ class PromptNotFoundException(Exception):
 
 
 def close_shop(driver):
+    '''moving the firefox killing to shell script'''
     PID = driver.service.process.pid
     try:
         log.info('closing shop...')
@@ -31,9 +31,8 @@ def close_shop(driver):
         driver.close()
         driver.quit()
         driver = None
-        os.kill(int(PID), signal.SIGKILL)
-    except OSError:
-        log.exception(OSError.with_traceback())
+    except OSError as ex:
+        log.exception(ex)
 
 
 def check_login_status(browser):
@@ -56,14 +55,13 @@ def load_cookies(browser):
     cookies = pickle.load(open(COOKIES, "rb"))
     log.info('loading cookies')
     for cookie in cookies:
-        log.info(cookie)
         browser.add_cookie(cookie)
     return browser
 
 
 def save_cookies(browser):
     log.info('saving cookies')
-    pickle.dump( browser.get_cookies(), open(COOKIES, "wb"))
+    pickle.dump(browser.get_cookies(), open(COOKIES, "wb"))
 
 
 def get_file_name(_file):
