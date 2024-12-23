@@ -18,6 +18,18 @@ Working with selenium can be challenging if you have no previous experience with
 
 Download `geckodriver` for your system [here](https://github.com/mozilla/geckodriver/releases). The script uses geckodriver after setting it in the path variables. Otherwise you can specify the specific location of the executable. You also need firefox installed unless you are going to be using chromedriver, in which case you will probably need a chrome based browser eg. Brave, Edge or Chrome. 
 
+```
+wget eases/download/v0.35.0/geckodriver-v0.35.0-linux-aarch64.tar.gz
+
+# Replace v0.35.0 with the actual Geckodriver version you need.
+tar -xvzf  geckodriver-v0.35.0-linux-aarch64.tar.gz
+
+chmod +x geckodriver 
+
+sudo mv geckodriver /usr/local/bin/ 
+
+geckodriver --version
+```
 
 ```
 browser = webdriver.Firefox(firefox_profile = profile, executable_path=firefox_path)
