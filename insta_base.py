@@ -137,6 +137,7 @@ def check_for_text(search_value: str, browser: webdriver):
 def get_driver() -> webdriver:
     log.info('getting webdriver')
     options = Options()
+    options.headless = True if Settings.osname == 'LINUX' else False
     options.set_preference('profile', Settings.profile_path)
     service = Service(Settings.firefox_path)
     browser = webdriver.Firefox(service=service, options=options)
