@@ -5,7 +5,6 @@ import logging as log
 import sys
 import time
 
-import pyautogui
 from bs4 import BeautifulSoup
 from config import Settings
 from logging.handlers import RotatingFileHandler
@@ -67,7 +66,7 @@ def save_cookies(browser):
 def get_file_name(_file):
     return os.path.basename(_file)
 
-
+ 
 def get_working_directory(_file):
     return os.path.dirname(_file)
 
