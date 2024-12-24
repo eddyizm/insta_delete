@@ -51,6 +51,9 @@ def get_length_of_page(driver):
 
 
 def load_cookies(browser):
+    if not os.path.isfile(COOKIES):
+        with open(COOKIES, 'wb') as file:
+            pickle.dump({}, file)
     cookies = pickle.load(open(COOKIES, "rb"))
     log.info('loading cookies')
     for cookie in cookies:
@@ -66,7 +69,7 @@ def save_cookies(browser):
 def get_file_name(_file):
     return os.path.basename(_file)
 
- 
+
 def get_working_directory(_file):
     return os.path.dirname(_file)
 
