@@ -10,6 +10,7 @@ class Settings:
         self.insta_username = os.getenv('USERNAME')
         self.insta_password = os.getenv('PASSWORD')
         self.log_path = os.getenv('LOG_PATH')
+        self.log_level = os.getenv('LOG_LEVEL', 20)
         self.app_log = os.getenv('APP_LOG')
         self.firefox_path = os.getenv('FIREFOX_PATH')
         self.profile_path = os.getenv('PROFILE_PATH')

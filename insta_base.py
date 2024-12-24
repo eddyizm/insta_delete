@@ -135,15 +135,19 @@ def check_for_text(search_value: str, browser: webdriver):
 
 
 def get_driver() -> webdriver:
-    log.info('getting webdriver')
-    options = Options()
-    options.headless = True if Settings.osname == 'LINUX' else False
-    options.set_preference('profile', Settings.profile_path)
-    service = Service(Settings.firefox_path)
-    browser = webdriver.Firefox(service=service, options=options)
-    browser.set_window_size(1200, 800)
-    browser.implicitly_wait(15)
-    return browser
+    try:
+        log.info('getting webdriver')
+        options = Options()
+        # headless = True if Settings.osname == 'LINUX' else False
+        options.add_argument('--headless')
+        options.set_preference('profile', Settings.profile_path)
+        service = Service(Settings.firefox_path)
+        browser = webdriver.Firefox(service=service, options=options)
+        browser.set_window_size(1200, 800)
+        browser.implicitly_wait(15)
+        return browser
+    except Exception as ex:
+        log.error(ex, exc_info=True)
 
 
 def get_password(driver):
