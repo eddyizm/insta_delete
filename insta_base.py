@@ -141,9 +141,10 @@ def get_driver() -> webdriver:
     try:
         log.info('getting webdriver')
         options = Options()
-        # headless = True if Settings.osname == 'LINUX' else False
-        options.add_argument('--headless')
+        user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0'
+        options.headless = True if Settings.osname == 'LINUX' else False
         options.set_preference('profile', Settings.profile_path)
+        options.profile.set_preference('general.useragent.override', user_agent)
         service = Service(Settings.firefox_path)
         browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(1200, 800)
