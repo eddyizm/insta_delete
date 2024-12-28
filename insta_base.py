@@ -14,6 +14,7 @@ from selenium.common.exceptions import MoveTargetOutOfBoundsException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from random import randrange
 
 
@@ -141,10 +142,12 @@ def get_driver() -> webdriver:
     try:
         log.info('getting webdriver')
         options = Options()
+        profile = FirefoxProfile()
         user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0'
         options.headless = True if Settings.osname == 'LINUX' else False
-        options.set_preference('profile', Settings.profile_path)
-        options.profile.set_preference('general.useragent.override', user_agent)
+        profile.set_preference('profile', Settings.profile_path)
+        profile.set_preference('general.useragent.override', user_agent)
+        options.set_preference('profile', profile)
         service = Service(Settings.firefox_path)
         browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(1200, 800)
