@@ -23,7 +23,7 @@ class PromptNotFoundException(Exception):
 
 
 def close_shop(driver):
-    '''moving the firefox killing to shell script'''
+    '''moving the firefox killing to shell nipt'''
     PID = driver.service.process.pid
     try:
         log.info('closing shop...')
@@ -142,12 +142,13 @@ def get_driver() -> webdriver:
     try:
         log.info('getting webdriver')
         options = Options()
-        profile = FirefoxProfile()
-        user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0'
+        # profile = FirefoxProfile()
+        # user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0'
         options.headless = True if Settings.osname == 'LINUX' else False
-        profile.set_preference('profile', Settings.profile_path)
-        profile.set_preference('general.useragent.override', user_agent)
-        options.profile = profile
+        options.set_preference('profile', Settings.profile_path)
+        # profile.set_preference('profile', Settings.profile_path)
+        # profile.set_preference('general.useragent.override', user_agent)
+        # options.profile = profile
         service = Service(Settings.firefox_path)
         browser = webdriver.Firefox(service=service, options=options)
         browser.set_window_size(1200, 800)
