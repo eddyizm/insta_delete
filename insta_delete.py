@@ -24,17 +24,17 @@ def open_archive():
 
 def write_to_archive(log, data):
     """write collected urls to file"""
-    with open(log, 'w', encoding= 'utf-8') as f:
+    with open(log, 'w', encoding='utf-8') as f:
         for d in data:
             if d.startswith('https://www.instagram.com/'):
-                f.write(str(d)+'\n')
+                f.write(str(d) + '\n')
             else:
-                f.write('https://www.instagram.com'+str(d)+'\n')
+                f.write('https://www.instagram.com' + str(d) + '\n')
 
 
 def parse_href(data):
     url_list = []
-    for link in BeautifulSoup(data, "html.parser", parse_only=SoupStrainer('a') ):
+    for link in BeautifulSoup(data, "html.parser", parse_only=SoupStrainer('a')):
         if link.has_attr('href'):
             t = link.get('href')
             if t is not None:
@@ -68,19 +68,19 @@ def scrape_current_post_count(browser) -> int:
         return post_count
 
 
-def scroll_loop(browser, count = 0, match = False):
+def scroll_loop(browser, count=0, match=0):
     # TODO add date posted scraping along with post count.
-    while(match==False):
+    while (match == 0):
         ib.random_time()
         log.info(f'scrolling {count}...')
-        ib.get_length_of_page(browser) # scrolling!
+        ib.get_length_of_page(browser)  # scrolling!
         # this len of page was no causing this loop to never complete.
         # need to come back to this as it was used originally
         count += 1
         # added count to ensure only older images get picked up.
-        if count > 25:
-            match=True
-    log.info('scrolled down: '+str(count)+' times!')
+        if count > 2:
+            match = 1
+    log.info('scrolled down: ' + str(count) + ' times!')
 
 
 def scroll_to_end(browser):
@@ -89,7 +89,7 @@ def scroll_to_end(browser):
         browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
         # len_of_page = ib.get_length_of_page(browser)
         scroll_loop(browser)
-    except Exception as err:
+    except Exception:
         log.info('error scrolling to end', exc_info=True)
     return browser.page_source
 
@@ -124,16 +124,17 @@ def delete_loop(browser, counter, urls) -> list:
 
 
 def delete_posts(browser):
-        new_file = open_archive()
-        counter = (len(new_file) - 1) if (10 >= len(new_file)) else 10
-        log.info('number of posts to delete: '+str(counter))
-        try:
-            remaining_urls = delete_loop(browser, counter, new_file) # [x for x in new_file if x not in deleted_urls]
-            log.info('while loop done and exited successfully')
-            write_to_archive(ib.Settings.log_path, remaining_urls)
-        except Exception as err:
-            log.info('Errog deleting posts!', exc_info=True)
-            sys.exit(1)
+    new_file = open_archive()
+    counter = (len(new_file) - 1) if (10 >= len(new_file)) else 10
+    log.info('number of posts to delete: ' + str(counter))
+    try:
+        remaining_urls = delete_loop(browser, counter, new_file)
+        # [x for x in new_file if x not in deleted_urls]
+        log.info('while loop done and exited successfully')
+        write_to_archive(ib.Settings.log_path, remaining_urls)
+    except Exception:
+        log.info('Errog deleting posts!', exc_info=True)
+        sys.exit(1)
 
 
 def scrape_urls(driver, file_size):
