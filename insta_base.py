@@ -206,6 +206,6 @@ handlers = [
         backupCount=5, encoding=None, delay=0
     )
 ]
-log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers=handlers, level=log.DEBUG)
+log.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s', handlers=handlers, level=log.INFO)
 BASE_DIR = get_working_directory(__file__)
 COOKIES = os.path.join(BASE_DIR, 'data/cookies.pkl')

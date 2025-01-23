@@ -14,10 +14,10 @@ log = logging.getLogger(__name__)
 def open_archive():
     """open and read archive file of filtered urls"""
     new_file = []
-    with open(ib.Settings.log_path, 'r', encoding= 'utf-8') as g:
+    with open(ib.Settings.log_path, 'r', encoding='utf-8') as g:
         lines = g.read().splitlines()
         for l in lines:
-            if l.startswith('https://www.instagram.com/p/'):
+            if l.startswith(f'https://www.instagram.com/{ib.Settings.insta_username}/p/'):
                 new_file.append(l)
         return new_file
 
@@ -26,7 +26,6 @@ def write_to_archive(log_path, data):
     """write collected urls to file"""
     try:
         log.info(f'writing data to {log_path}, size {len(data)}')
-        log.debug(f'data input: {data}')
         with open(log_path, 'w', encoding='utf-8') as f:
             for d in data:
                 log.debug(d)
@@ -87,7 +86,7 @@ def scroll_loop(browser, count=0, match=0):
         # need to come back to this as it was used originally
         count += 1
         # added count to ensure only older images get picked up.
-        if count > 2:
+        if count > 20:
             match = 1
     log.info('scrolled down: ' + str(count) + ' times!')
 
