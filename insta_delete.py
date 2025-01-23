@@ -25,12 +25,15 @@ def open_archive():
 def write_to_archive(log_path, data):
     """write collected urls to file"""
     try:
-        log.info(f'writing data to {log_path}')
+        log.info(f'writing data to {log_path}, size {len(data)}')
+        log.debug(f'data input: {data}')
         with open(log_path, 'w', encoding='utf-8') as f:
             for d in data:
+                log.debug(d)
                 if d.startswith('https://www.instagram.com/'):
                     f.write(str(d) + '\n')
                 else:
+                    log.debug(d)
                     f.write('https://www.instagram.com' + str(d) + '\n')
     except IOError:
         log.error('Failed to write to file:', exc_info=True)
