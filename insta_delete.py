@@ -26,7 +26,7 @@ def write_to_archive(log_path, data):
     """write collected urls to file"""
     try:
         log.info(f'writing data to {log_path}')
-        with open(log, 'w', encoding='utf-8') as f:
+        with open(log_path, 'w', encoding='utf-8') as f:
             for d in data:
                 if d.startswith('https://www.instagram.com/'):
                     f.write(str(d) + '\n')
