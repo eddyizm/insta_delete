@@ -98,6 +98,7 @@ def scroll_to_end(browser):
         browser.get(f"https://www.instagram.com/{ib.Settings.insta_username}")
         # len_of_page = ib.get_length_of_page(browser)
         scroll_loop(browser)
+        ib.dump_html_to_file(browser)
     except Exception:
         log.info('error scrolling to end', exc_info=True)
     return browser.page_source
