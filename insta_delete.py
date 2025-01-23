@@ -22,14 +22,20 @@ def open_archive():
         return new_file
 
 
-def write_to_archive(log, data):
+def write_to_archive(log_path, data):
     """write collected urls to file"""
-    with open(log, 'w', encoding='utf-8') as f:
-        for d in data:
-            if d.startswith('https://www.instagram.com/'):
-                f.write(str(d) + '\n')
-            else:
-                f.write('https://www.instagram.com' + str(d) + '\n')
+    try:
+        log.info(f'writing data to {log_path}')
+        with open(log, 'w', encoding='utf-8') as f:
+            for d in data:
+                if d.startswith('https://www.instagram.com/'):
+                    f.write(str(d) + '\n')
+                else:
+                    f.write('https://www.instagram.com' + str(d) + '\n')
+    except IOError:
+        log.error('Failed to write to file:', exc_info=True)
+    except Exception:
+        log.error('function failed:', exc_info=True)
 
 
 def parse_href(data):
